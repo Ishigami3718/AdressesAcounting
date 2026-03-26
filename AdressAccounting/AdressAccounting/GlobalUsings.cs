@@ -1,0 +1,5 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Design;
+global using Npgsql.EntityFrameworkCore.PostgreSQL;
+global using Microsoft.Extensions.Configuration.Json;
+global using Microsoft.Extensions.Configuration;
