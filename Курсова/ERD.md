@@ -1,14 +1,14 @@
 # Сутності
 ## Головні
-- [Area(Building)](Area(Building))
-- [Street](Street)
-- [Adress](Adress)
+- [Area(Building)](Entities/Area(Building))
+- [Street](Entities/Street)
+- [Adress](Entities/Adress)
 ## Допоміжні
-- [MergeRecords](MergeRecords)
-- [SplitRecords](SplitRecords)
-- [AdressRecords](AdressRecords)
-- [StreetNameRecords](StreetNameRecords)
-![575](ERD.png)
+- [MergeRecords](Entities/MergeRecords)
+- [SplitRecords](Entities/SplitRecords)
+- [AdressRecords](Entities/AdressRecords)
+- [StreetNameRecords](Entities/StreetNameRecords)
+![](resources/ERD.png)
 ```
 // Use DBML to define your database structure
 
