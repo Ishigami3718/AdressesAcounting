@@ -29,5 +29,6 @@ namespace AdressAccounting.Services
             db.MergeRecords.Add(mergeRecord);
             db.SaveChanges();
         }
+
     }
 }

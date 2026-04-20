@@ -1,4 +1,5 @@
 ﻿using AdressAccounting.Services;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Windows;
@@ -23,16 +24,13 @@ namespace AdressAccounting
             InitializeComponent();
             AdressAccountingContext db = Db.Context;
             MergeService mergeService = new MergeService(db);
-            mergeService.MergeStreets(new List<Street> 
-            {  
-                db.Streets.First(), 
-                 db.Streets.Skip(1).First()
-            }, 
-            new Street
+            StreetService streetService = new StreetService(db);
+
+            foreach( var street in streetService.GetParentStreetsFromMerge(db.Streets.ToList()[2]))
             {
-                Name = "3"
-            }, 
-            DateOnly.FromDateTime(DateTime.Now));
+                Debug.WriteLine($"{street.Id}     {street.Name}");
+            }
+            
         }
     }
 }

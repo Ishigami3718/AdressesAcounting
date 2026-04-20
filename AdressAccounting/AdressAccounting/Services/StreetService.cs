@@ -110,12 +110,13 @@ namespace AdressAccounting.Services
 
         public List<Street> GetParentStreetsFromMerge(Street street)
         {
+            //TODO: Rename fields and relations in db and add double "" for table names and fields
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN MergedStreets m ON s.Id = ms.streetId
-                   JOIN MergeRecords ms ON ms.id = m.mergeRecordsId
-                   WHERE m.StreetIdResultOfMerging = @streetId";
+                   FROM ""Street"" s
+                   JOIN ""MergedStreets"" ms ON s.Id = ms.""streetId""
+                   JOIN ""MergeRecords"" mr ON mr.id = ms.""mergeRecordsId""
+                   WHERE mr.""streetId(result of merging)"" = @streetId";
             return db.Streets
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
                     .ToList();
