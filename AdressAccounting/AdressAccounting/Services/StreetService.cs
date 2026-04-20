@@ -133,5 +133,59 @@ namespace AdressAccounting.Services
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
                     .FirstOrDefault();
         }
+
+
+
+        public List<Street> GetStreetsNameChangedAfterDate(DateOnly date)
+        {
+            var sql = @"
+                   SELECT s.*
+                   FROM Street s
+                   JOIN StreetNameRecordsStreets snrs ON s.id = snrs.streetId
+                   JOIN StreetNameRecords snr ON snr.id = snrs.streetNameRecordsId
+                   WHERE snr.dateFrom >= @date";
+            return db.Streets
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
+                    .ToList();
+        }
+
+        public List<Street> GetStreetsMergedAfterDate(DateOnly date)
+        {
+            var sql = @"
+                   SELECT s.*
+                   FROM Street s
+                   JOIN MergedStreets ms ON s.id = ms.streetId
+                   JOIN MergeRecords mr ON mr.id = ms.mergeRecordsId
+                   WHERE mr.date >= @date";
+            return db.Streets
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
+                    .ToList();
+        }
+
+        public List<Street> GetStreetsSplitAfterDate(DateOnly date)
+        {
+            var sql = @"
+                   SELECT s.*
+                   FROM Street s
+                   JOIN SplitRecord sr ON s.id = sr.streetIdSplittedStreet
+                   JOIN SplitResults r ON r.splitRecordsId = sr.id
+                   WHERE sr.date >= @date";
+            return db.Streets
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
+                    .ToList();
+        }
+
+        public List<Street> GetStreetsNameChangedInPeriod(DateOnly startDate, DateOnly endDate)
+        {
+            var sql = @"
+                   SELECT s.*
+                   FROM Street s
+                   JOIN StreetNameRecordsStreets snrs ON s.id = snrs.streetId
+                   JOIN StreetNameRecords snr ON snr.id = snrs.streetNameRecordsId
+                   WHERE snr.dateFrom >= @startDate AND snr.dateFrom <= @endDate";
+            return db.Streets
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("startDate", startDate), new Npgsql.NpgsqlParameter("endDate", endDate))
+                    .ToList();
+        }
     }
 }

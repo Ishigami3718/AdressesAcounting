@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using AdressAccounting.Services;
+using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,7 +21,18 @@ namespace AdressAccounting
         public MainWindow()
         {
             InitializeComponent();
-            
+            AdressAccountingContext db = Db.Context;
+            MergeService mergeService = new MergeService(db);
+            mergeService.MergeStreets(new List<Street> 
+            {  
+                db.Streets.First(), 
+                 db.Streets.Skip(1).First()
+            }, 
+            new Street
+            {
+                Name = "3"
+            }, 
+            DateOnly.FromDateTime(DateTime.Now));
         }
     }
 }

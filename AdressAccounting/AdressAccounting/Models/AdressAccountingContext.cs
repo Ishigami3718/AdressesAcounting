@@ -60,7 +60,7 @@ public partial class AdressAccountingContext : DbContext
             entity.ToTable("Adress");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.AreaId).HasColumnName("areaId");
             entity.Property(e => e.IsActual).HasColumnName("isActual");
@@ -81,7 +81,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("AdressRecords_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.AdressId).HasColumnName("adressId");
             entity.Property(e => e.AreaId).HasColumnName("areaId");
@@ -105,7 +105,7 @@ public partial class AdressAccountingContext : DbContext
             entity.ToTable("Area(Building)");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
         });
 
@@ -114,7 +114,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("MergeRecords_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.StreetIdResultOfMerging).HasColumnName("streetId(result of merging)");
@@ -129,7 +129,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("MergedStreets_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.MergeRecordsId).HasColumnName("mergeRecordsId");
             entity.Property(e => e.StreetId).HasColumnName("streetId");
@@ -148,7 +148,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("SplitRecords_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.StreetIdSplittedStreet).HasColumnName("streetId(splitted street)");
@@ -164,7 +164,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("SplitResults_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.SplitRecordsId).HasColumnName("splitRecordsId");
             entity.Property(e => e.StreetId).HasColumnName("streetId");
@@ -185,7 +185,7 @@ public partial class AdressAccountingContext : DbContext
             entity.ToTable("Street");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
@@ -197,7 +197,7 @@ public partial class AdressAccountingContext : DbContext
             entity.HasKey(e => e.Id).HasName("StreetNameRecords_pkey");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.DateFrom).HasColumnName("dateFrom");
             entity.Property(e => e.DateTo).HasColumnName("dateTo");
@@ -213,7 +213,7 @@ public partial class AdressAccountingContext : DbContext
             entity.ToTable("StreetNameRecordsStreet");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("id");
             entity.Property(e => e.StreetId).HasColumnName("streetId");
             entity.Property(e => e.StreetNameRecordsId).HasColumnName("streetNameRecordsId");
