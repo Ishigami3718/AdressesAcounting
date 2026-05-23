@@ -12,20 +12,25 @@ namespace AdressAccounting.Services
             db = context;
         }
 
-        public void AddStreet(Street street)
+        private void AddStreet(Street street)
         {
             db.Streets.Add(street);
             db.SaveChanges();
         }
 
-        public List<Street> SearchByName(string name)
+        public void CreateStreet(string name)
         {
-            return db.Streets.Where(s => s.Name.ToLower().Contains(name.ToLower())).ToList();
+            AddStreet(new Street { Name = name});
         }
 
-        public List<Street> FilterByHasNameHistory()
+        public IQueryable<Street> SearchByName(string name)
         {
-            return db.Streets.Where(s => s.StreetNameRecordsStreets.Any()).ToList();
+            return db.Streets.Where(s => s.Name.ToLower().Contains(name.ToLower()));
+        }
+
+        public IQueryable<Street> FilterByHasNameHistory()
+        {
+            return db.Streets.Where(s => s.StreetNameRecordsStreets.Any());
             /*
             SELECT s.*
             FROM Streets s
@@ -34,9 +39,9 @@ namespace AdressAccounting.Services
              */
         }
 
-        public List<Street> FilterByHasMergeHistory()
+        public IQueryable<Street> FilterByHasMergeHistory()
         {
-            return db.Streets.Where(s => s.MergeRecords.Any()).ToList();
+            return db.Streets.Where(s => s.MergeRecords.Any());
             /*
             SELECT s.*
             FROM Streets s
@@ -45,9 +50,9 @@ namespace AdressAccounting.Services
              */
         }
 
-        public List<Street> FilterByHasSplitHistory()
+        public IQueryable<Street> FilterByHasSplitHistory()
         {
-            return db.Streets.Where(s => s.SplitResults.Any()).ToList();
+            return db.Streets.Where(s => s.SplitResults.Any());
             /*
             SELECT s.*
             FROM Streets s
@@ -59,14 +64,14 @@ namespace AdressAccounting.Services
              */
         }
 
-        public List<Street> GetAllStreets()
+        public IQueryable<Street> GetAllStreets()
         {
-            return db.Streets.ToList();
+            return db.Streets;
         }
 
-        public List<Street> SortByName()
+        public IQueryable<Street> SortByName()
         {
-            return db.Streets.OrderBy(s => s.Name).ToList();
+            return db.Streets.OrderBy(s => s.Name);
         }
 
         public Street GetParentStreetFromSplit(Street street)
@@ -85,30 +90,29 @@ namespace AdressAccounting.Services
             return db.Streets.FromSqlRaw(sql).ToList().FirstOrDefault();*/
             var sql = @"
                    SELECT s.*
-                   FROM Streets s
-                   JOIN SplitRecord sr ON s.id = sr.streetIdSplittedStreet
-                   JOIN SplitResults r ON r.splitRecordsId = sr.id
-                   WHERE r.streetId = @streetId";
+                   FROM ""Streets"" s
+                   JOIN ""SplitRecord"" sr ON s.id = sr.""streetIdSplittedStreet""
+                   JOIN ""SplitResults"" r ON r.""splitRecordsId"" = sr.id
+                   WHERE r.""streetId"" = @streetId";
             return db.Streets
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
                     .FirstOrDefault();
         }
 
-        public List<Street> GetChildStreetsFromSplit(Street street)
+        public IQueryable<Street> GetChildStreetsFromSplit(Street street)
         {
             //TODO: Rename fields and relations in db
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN SplitRecords r ON sr.splitRecordsId = r.id
-                   JOIN SplitResults sr ON s.id = sr.streetId
-                   WHERE r.streetIdSplittedStreet = @streetId";
+                   FROM ""Street"" s
+                   JOIN ""SplitRecords"" r ON sr.""splitRecordsId"" = r.id
+                   JOIN ""SplitResults"" sr ON s.id = sr.""streetId""
+                   WHERE r.""streetIdSplittedStreet"" = @streetId";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
 
-        public List<Street> GetParentStreetsFromMerge(Street street)
+        public IQueryable<Street> GetParentStreetsFromMerge(Street street)
         {
             //TODO: Rename fields and relations in db and add double "" for table names and fields
             var sql = @"
@@ -118,8 +122,7 @@ namespace AdressAccounting.Services
                    JOIN ""MergeRecords"" mr ON mr.id = ms.""mergeRecordsId""
                    WHERE mr.""streetId(result of merging)"" = @streetId";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
 
         public Street GetChildStreetFromMerge(Street street)
@@ -127,9 +130,9 @@ namespace AdressAccounting.Services
             var sql = @"
                    SELECT s.*
                    FROM Street s
-                   JOIN MergeRecords m ON s.id = m.streetIdResultOfMerging
-                   JOIN MergedStreets ms ON ms.mergeRecordsId = m.id
-                   WHERE ms.streetId = @streetId";
+                   JOIN ""MergeRecords"" m ON s.id = m.""streetIdResultOfMerging""
+                   JOIN ""MergedStreets"" ms ON ms.""mergeRecordsId"" = m.id
+                   WHERE ms.""streetId"" = @streetId";
             return db.Streets
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
                     .FirstOrDefault();
@@ -137,56 +140,78 @@ namespace AdressAccounting.Services
 
 
 
-        public List<Street> GetStreetsNameChangedAfterDate(DateOnly date)
+        public IQueryable<Street> GetStreetsNameChangedAfterDate(DateOnly date)
         {
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN StreetNameRecordsStreets snrs ON s.id = snrs.streetId
-                   JOIN StreetNameRecords snr ON snr.id = snrs.streetNameRecordsId
-                   WHERE snr.dateFrom >= @date";
+                   FROM ""Street"" s
+                   JOIN ""StreetNameRecordsStreets"" snrs ON s.id = snrs.""streetId""
+                   JOIN ""StreetNameRecords"" snr ON snr.id = snrs.""streetNameRecordsId""
+                   WHERE snr.""dateFrom"" >= @date";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date));
         }
 
-        public List<Street> GetStreetsMergedAfterDate(DateOnly date)
+        public IQueryable<Street> GetStreetsMergedAfterDate(DateOnly date)
         {
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN MergedStreets ms ON s.id = ms.streetId
-                   JOIN MergeRecords mr ON mr.id = ms.mergeRecordsId
-                   WHERE mr.date >= @date";
+                   FROM ""Street"" s
+                   JOIN ""MergedStreets"" ms ON s.id = ms.""streetId""
+                   JOIN ""MergeRecords"" mr ON mr.id = ms.""mergeRecordsId""
+                   WHERE mr.""date"" >= @date";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date));
         }
 
-        public List<Street> GetStreetsSplitAfterDate(DateOnly date)
+        public IQueryable<Street> GetStreetsSplitAfterDate(DateOnly date)
         {
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN SplitRecord sr ON s.id = sr.streetIdSplittedStreet
-                   JOIN SplitResults r ON r.splitRecordsId = sr.id
-                   WHERE sr.date >= @date";
+                   FROM ""Street"" s
+                   JOIN ""SplitRecord"" sr ON s.id = sr.""streetIdSplittedStreet""
+                   JOIN ""SplitResults"" r ON r.""splitRecordsId"" = sr.id
+                   WHERE sr.""date"" >= @date";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("date", date));
         }
 
-        public List<Street> GetStreetsNameChangedInPeriod(DateOnly startDate, DateOnly endDate)
+        public IQueryable<Street> GetStreetsNameChangedInPeriod(DateOnly startDate, DateOnly endDate)
         {
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN StreetNameRecordsStreets snrs ON s.id = snrs.streetId
-                   JOIN StreetNameRecords snr ON snr.id = snrs.streetNameRecordsId
-                   WHERE snr.dateFrom >= @startDate AND snr.dateFrom <= @endDate";
+                   FROM ""Street"" s
+                   JOIN ""StreetNameRecordsStreets"" snrs ON s.id = snrs.""streetId""
+                   JOIN ""StreetNameRecords"" snr ON snr.id = snrs.""streetNameRecordsId""
+                   WHERE snr.""dateFrom"" between @startDate AND @endDate";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("startDate", startDate), new Npgsql.NpgsqlParameter("endDate", endDate))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("startDate", startDate),
+                    new Npgsql.NpgsqlParameter("endDate", endDate));
+        }
+
+        public void UpdateStreetName(Street street, string newName, DateOnly date)
+        {
+            //TODO: Спитати у Іллі Миколайовича, чи потрібно додавати запис про зміну назви в історію,
+            //якщо назва не змінилася і чи треба дата створення вулиці у філдах вулиці
+            //спитати про 28 запитів з методички
+
+            //TODO: make checking if already exists record 
+            string name = street.Name;  
+            street.Name = newName;
+            StreetNameRecord record = new StreetNameRecord()
+            {
+                DateFrom = date,
+                DateTo = DateOnly.FromDateTime(DateTime.Now),
+                Name = name
+            };
+            db.StreetNameRecords.Add(record);
+            StreetNameRecordsStreet snrs = new StreetNameRecordsStreet()
+            {
+                Street = street,
+                StreetNameRecords = record
+            };
+            db.StreetNameRecordsStreets.Add(snrs);
+            db.SaveChanges();
         }
     }
 }

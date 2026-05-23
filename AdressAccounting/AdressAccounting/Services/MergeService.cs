@@ -6,11 +6,11 @@ namespace AdressAccounting.Services
 {
     public class MergeService
     {
-        AdressAccountingContext db;
+        AdressAccountingContext _db;
 
         public MergeService(AdressAccountingContext context)
         {
-            db = context;
+            _db = context;
         }
 
 
@@ -26,8 +26,8 @@ namespace AdressAccounting.Services
                     StreetId = old.Id
                 }).ToList()
             };
-            db.MergeRecords.Add(mergeRecord);
-            db.SaveChanges();
+            _db.MergeRecords.Add(mergeRecord);
+            _db.SaveChanges();
         }
 
     }

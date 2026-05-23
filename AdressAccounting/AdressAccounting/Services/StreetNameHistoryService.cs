@@ -16,9 +16,9 @@ namespace AdressAccounting.Services
         {
             var sql = @"
                    SELECT s.*
-                   FROM StreetNameRecords s
-                   JOIN StreetNameRecordsStreet snrs ON s.Id = snrs.streetNameRecordsId
-                   WHERE snrs.streetId = @streetId";
+                   FROM ""StreetNameRecords"" s
+                   JOIN ""StreetNameRecordsStreet"" snrs ON s.""id"" = snrs.""streetNameRecordsId""
+                   WHERE snrs.""streetId"" = @streetId";
             return db.StreetNameRecords
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
                     .ToList();
