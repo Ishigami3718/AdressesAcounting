@@ -25,12 +25,18 @@ namespace AdressAccounting
             AdressAccountingContext db = Db.Context;
             MergeService mergeService = new MergeService(db);
             StreetService streetService = new StreetService(db);
+            SplitService splitService = new SplitService(db);
 
-            foreach( var street in streetService.GetParentStreetsFromMerge(db.Streets.ToList()[2]))
+            mergeService.MergeStreets(new(){ db.Streets.ToList()[0], db.Streets.ToList()[1] },
+                new Street { Name = "Merged Street12" }, DateOnly.FromDateTime(DateTime.Now));
+            splitService.SplitStreet(db.Streets.ToList()[2], new() { new Street { Name = "Split Street 1" }, new Street { Name = "Split Street 2" } },
+                DateOnly.FromDateTime(DateTime.Now));
+
+            /*foreach( var street in streetService.GetParentStreetsFromMerge(db.Streets.ToList()[2]))
             {
                 Debug.WriteLine($"{street.Id}     {street.Name}");
-            }
-            
+            }*/
+
         }
     }
 }

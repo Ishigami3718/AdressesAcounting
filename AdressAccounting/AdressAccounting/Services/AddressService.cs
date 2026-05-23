@@ -22,6 +22,11 @@ namespace AdressAccounting.Services
         {
             return _db.Adresses.Where(a => a.IsActual == true);
         }
+
+        public IQueryable<AdressRecord> GetAdressHistory(Adress adress)
+        {
+            return _db.AdressRecords.Where(ar => ar.AdressId == adress.Id);
+        }
         public void CreateAdress(Adress adress)
         {
             _db.Adresses.Add(adress);
@@ -40,19 +45,19 @@ namespace AdressAccounting.Services
             {
                 adressRecord.DateTo = DateOnly.FromDateTime(DateTime.Now);
             }
+            else throw new Exception("Adress record not found");
 
-            
+
             int oldNumber = existingAdress.Number ?? 0;
             existingAdress.Number = newNumber;
             AdressRecord newRecord = new AdressRecord
             {
-                AdressId = existingAdress.Id,
                 Number = newNumber,
                 DateFrom = DateOnly.FromDateTime(DateTime.Now),
                 DateTo = null,
                 AreaId = existingAdress.AreaId
             };
-            _db.AdressRecords.Add(newRecord);
+            existingAdress.AdressRecords.Add(newRecord);
             _db.SaveChanges();
         }
     }

@@ -7,6 +7,6 @@ namespace AdressAccounting.Utils
 {
     public static class Db
     {
-        public static AdressAccountingContext Context => new AdressAccountingContext();
+        public static readonly AdressAccountingContext Context = new AdressAccountingContext();
     }
 }
