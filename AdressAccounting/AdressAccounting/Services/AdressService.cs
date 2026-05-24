@@ -4,11 +4,11 @@ using System.Text;
 
 namespace AdressAccounting.Services
 {
-    public class AddressService
+    public class AdressService
     {
         AdressAccountingContext _db;
 
-        public AddressService(AdressAccountingContext context)
+        public AdressService(AdressAccountingContext context)
         {
             _db = context;
         }
@@ -16,6 +16,11 @@ namespace AdressAccounting.Services
         public IQueryable<Adress> GetAdressByNumber(int number)
         {
             return _db.Adresses.Where(a => a.Number == number);
+        }
+
+        public IQueryable<Adress> GetAllAdresses()
+        {
+            return _db.Adresses;
         }
 
         public IQueryable<Adress> GetActualAdresses()
@@ -27,6 +32,22 @@ namespace AdressAccounting.Services
         {
             return _db.AdressRecords.Where(ar => ar.AdressId == adress.Id);
         }
+
+        public IQueryable<Adress> GetAdressesByStreet(Street street)
+        {
+            return _db.Adresses.Where(a => a.StreetId == street.Id);
+        }
+
+        public IQueryable<Adress> GetAdressesWithHistory()
+        {
+            return _db.Adresses.Where(a => a.AdressRecords.Any());
+            /*
+             SELECT a.*
+             FROM Adresses a
+             JOIN AdressRecords r
+             ON a.Id = r.AdressId
+              */
+        }
         public void CreateAdress(Adress adress)
         {
             _db.Adresses.Add(adress);
@@ -37,9 +58,9 @@ namespace AdressAccounting.Services
         {
 
             var existingAdress = _db.Adresses.Find(adress.Id);
-            if(existingAdress == null) throw new Exception("Adress not found");
+            if (existingAdress == null) throw new Exception("Adress not found");
             var adressRecord = _db.AdressRecords.Where(ar => ar.AdressId == adress.Id)
-                .OrderByDescending(ar =>ar.Id)
+                .OrderByDescending(ar => ar.Id)
                 .LastOrDefault();
             if (adressRecord != null)
             {
@@ -58,6 +79,16 @@ namespace AdressAccounting.Services
                 AreaId = existingAdress.AreaId
             };
             existingAdress.AdressRecords.Add(newRecord);
+            _db.SaveChanges();
+        }
+
+        public void RedactAdress(Adress adress)
+        {
+            var existingAdress = _db.Adresses.Find(adress.Id);
+            if (existingAdress == null) throw new Exception("Adress not found");
+            existingAdress.Number = adress.Number;
+            existingAdress.Street = adress.Street;
+            existingAdress.IsActual = adress.IsActual;
             _db.SaveChanges();
         }
     }

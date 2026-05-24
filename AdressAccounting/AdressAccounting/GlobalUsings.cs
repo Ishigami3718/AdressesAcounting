@@ -5,3 +5,4 @@ global using Microsoft.Extensions.Configuration.Json;
 global using Microsoft.Extensions.Configuration;
 global using AdressAccounting.Utils;
 global using AdressAccounting.Models;
+global using AdressAccounting.Services;

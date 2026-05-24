@@ -19,23 +19,32 @@ namespace AdressAccounting
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly AdressAccountingContext _db;
+        private readonly MergeService _mergeService;
+        private readonly StreetService _streetService;
+        private readonly SplitService _splitService;
+        private readonly StreetNameHistoryService _streetNameHistoryService;
+        private readonly AdressService _adressService;
         public MainWindow()
         {
             InitializeComponent();
-            AdressAccountingContext db = Db.Context;
-            MergeService mergeService = new MergeService(db);
-            StreetService streetService = new StreetService(db);
-            SplitService splitService = new SplitService(db);
-
-            mergeService.MergeStreets(new(){ db.Streets.ToList()[0], db.Streets.ToList()[1] },
-                new Street { Name = "Merged Street12" }, DateOnly.FromDateTime(DateTime.Now));
-            splitService.SplitStreet(db.Streets.ToList()[2], new() { new Street { Name = "Split Street 1" }, new Street { Name = "Split Street 2" } },
-                DateOnly.FromDateTime(DateTime.Now));
+            _db = Db.Context;
+            _mergeService = new MergeService(_db);
+            _splitService = new SplitService(_db);
+            _streetService = new StreetService(_db);
+            _adressService = new AdressService(_db);
+            _streetNameHistoryService = new StreetNameHistoryService(_db);
+            MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService));
 
             /*foreach( var street in streetService.GetParentStreetsFromMerge(db.Streets.ToList()[2]))
             {
                 Debug.WriteLine($"{street.Id}     {street.Name}");
             }*/
+
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
         }
     }

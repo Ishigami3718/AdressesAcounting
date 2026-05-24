@@ -15,18 +15,28 @@ namespace AdressAccounting.Validators
                 .NotEmpty().WithMessage("Дата початку не може бути порожньою")
                 .LessThanOrEqualTo(x => x.DateTo)
                 .WithMessage("Дата початку повинна бути раніше дати закінчення")
-                .MustAsync(BeHigherThenLast)
-                .WithMessage("Дата початку повинна бути пізніше останньої дати");
+                /*.MustAsync(BeHigherThenLast)
+                .WithMessage("Дата початку повинна бути пізніше останньої дати")*/;
             RuleFor(x => x.DateTo)
                 .NotEmpty().WithMessage("Дата закінчення не може бути порожньою")
-                .GreaterThanOrEqualTo(x => x.DateFrom).WithMessage("Дата закінчення повинна być позже або рівна даті початку");
+                .GreaterThanOrEqualTo(x => x.DateFrom)
+                .WithMessage("Дата закінчення повинна бути після дати початку")
+                /*.MustAsync(BeLowerThenLast)
+                .WithMessage("Дата закінчення повинна бути раніше поточної дати")*/;
         }
 
-        async Task<bool> BeHigherThenLast(DateOnly? date,CancellationToken cancellationToken)
+        /*async Task<bool> BeHigherThenLast(DateOnly? date,CancellationToken cancellationToken)
         {
             bool exists = await _db.AdressRecords
                 .AnyAsync(a => a.DateFrom > date, cancellationToken);
             return !exists;
         }
+
+        async Task<bool> BeLowerThenLast(DateOnly? date, CancellationToken cancellationToken)
+        {
+            bool exists = await _db.AdressRecords
+                .AnyAsync(a => a.DateTo < DateOnly.FromDateTime(DateTime.Now), cancellationToken);
+            return !exists;
+        }*/
     }
 }
