@@ -8,13 +8,14 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <DockPanel>
-            <Menu DockPanel.Dock="Left">
+            <Menu DockPanel.Dock="Top">
                 <MenuItem Header="Адреси" Tag="UI/AdressFrame.xaml"/>
                 <MenuItem Header="Вулиці" Tag="UI/StreetFrame.xaml"/>
                 <MenuItem Header="Злиття вулиць" Tag="UI/MergeFrame.xaml"/>
                 <MenuItem Header="Розщеплення вулиць" Tag="UI/SplitFrame.xaml"/>
             </Menu>
+            <Frame Name="MainFrame" NavigationUIVisibility="Hidden" />
         </DockPanel>
-        <Frame Name="MainFrame" NavigationUIVisibility="Hidden" />
+        
     </Grid>
 </Window>

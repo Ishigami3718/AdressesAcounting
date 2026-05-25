@@ -1,0 +1,29 @@
+﻿<Window x:Class="AdressAccounting.UI.AdressHistory"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdressAccounting.UI"
+        mc:Ignorable="d"
+        Title="AdressHistory" Height="300" Width="400">
+    <Grid>
+        <DataGrid Name="AdressDataGrid" AutoGenerateColumns="False" 
+          CanUserAddRows="False" CanUserDeleteRows="False"
+          CanUserResizeRows="False" CanUserReorderColumns="False"
+          IsReadOnly="True" IsHitTestVisible="False"
+          Margin="5" ItemsSource="{Binding AdressRecords}" CanUserSortColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" IsReadOnly="True"
+                            CanUserReorder="False" CanUserResize="False" Width="0.2*"/>
+                <DataGridTextColumn Header="Адреса" Binding="{Binding Adress.Number}" IsReadOnly="True"
+                            CanUserReorder="False" CanUserResize="False" Width="0.3*"/>
+                <DataGridTextColumn Header="Вулиця" Binding="{Binding Adress.Street.Name}" IsReadOnly="True"
+                            CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
+                <DataGridTextColumn Header="Від" Binding="{Binding DateFrom}" IsReadOnly="True"
+            CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
+                <DataGridTextColumn Header="До" Binding="{Binding DateTo}" IsReadOnly="True"
+            CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

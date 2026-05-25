@@ -48,6 +48,44 @@ namespace AdressAccounting.Services
              ON a.Id = r.AdressId
               */
         }
+
+        public IQueryable<Adress> GetFilteredAdresses(bool isActual, bool hasHistory, string numberFilter,
+            Street selectedStreet, DateOnly? historyFrom, DateOnly? historyTo)
+        {
+            IQueryable<Adress> query = _db.Adresses.Include(a => a.Street);
+
+            if (isActual)
+            {
+                query = query.Where(a => a.IsActual == true);
+            }
+
+            if (hasHistory)
+            {
+                query = query.Where(a => a.AdressRecords.Any());
+            }
+
+            if (!string.IsNullOrEmpty(numberFilter) && int.TryParse(numberFilter, out int number))
+            {
+                query = query.Where(a => a.Number == number);
+            }
+
+            if (selectedStreet != null)
+            {
+                query = query.Where(a => a.StreetId == selectedStreet.Id);
+            }
+
+            if (historyFrom != null)
+            {
+                query = query.Where(a => a.AdressRecords.Any(r => r.DateFrom >= historyFrom.Value));
+            }
+
+            if (historyTo != null)
+            {
+                query = query.Where(a => a.AdressRecords.Any(r => r.DateTo <= historyTo.Value));
+            }
+
+            return query;
+        }
         public void CreateAdress(Adress adress)
         {
             _db.Adresses.Add(adress);
@@ -89,6 +127,14 @@ namespace AdressAccounting.Services
             existingAdress.Number = adress.Number;
             existingAdress.Street = adress.Street;
             existingAdress.IsActual = adress.IsActual;
+            _db.SaveChanges();
+        }
+
+        public void DeleteAdress(Adress adress)
+        {
+            var existingAdress = _db.Adresses.Find(adress.Id);
+            if (existingAdress == null) throw new Exception("Adress not found");
+            _db.Adresses.Remove(existingAdress);
             _db.SaveChanges();
         }
     }

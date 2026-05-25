@@ -28,7 +28,15 @@ namespace AdressAccounting
         public MainWindow()
         {
             InitializeComponent();
-            _db = Db.Context;
+            try
+            {
+                _db = Db.Context;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Помилка підключення бази даних: " + ex.Message);
+                return;
+            }
             _mergeService = new MergeService(_db);
             _splitService = new SplitService(_db);
             _streetService = new StreetService(_db);

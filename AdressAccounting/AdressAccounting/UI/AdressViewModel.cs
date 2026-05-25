@@ -18,6 +18,11 @@ namespace AdressAccounting.UI
         private bool _isHasHistoryFilter;
         private string _selectedAdressFilter;
         private Street _selectedStreetFilter;
+        private DateOnly? _selectedDateFromFilter;
+        private DateOnly? _selectedDateToFilter;
+        private Adress _selectedAdress;
+        private string _countOfAdresses;
+        public bool IsAdressSelected => SelectedAdress != null;
 
         public ObservableCollection<Adress> Adresses
         {
@@ -73,6 +78,50 @@ namespace AdressAccounting.UI
                 OnPropertyChanged(nameof(SelectedStreetFilter));
             }
         }
+
+        public DateOnly? SelectedDateFromFilter
+        {
+            get => _selectedDateFromFilter;
+            set
+            {
+                _selectedDateFromFilter = value;
+                LoadAdresses();
+                OnPropertyChanged(nameof(SelectedDateFromFilter));
+            }
+        }
+
+        public DateOnly? SelectedDateToFilter
+        {
+            get => _selectedDateToFilter;
+            set
+            {
+                _selectedDateToFilter = value;
+                LoadAdresses();
+                OnPropertyChanged(nameof(SelectedDateToFilter));
+            }
+        }
+
+        public Adress SelectedAdress
+        {
+            get => _selectedAdress;
+            set
+            {
+                _selectedAdress = value;
+                OnPropertyChanged(nameof(SelectedAdress));
+                OnPropertyChanged(nameof(IsAdressSelected));
+            }
+        }
+
+        public string CountOfAdresses
+        {
+            get => $"Кількість адрес: {_countOfAdresses}";
+            set
+            {
+                _countOfAdresses = value;
+                OnPropertyChanged(nameof(CountOfAdresses));
+            }
+        }
+
         public AdressViewModel(AdressService adressService, StreetService streetService)
         {
             _adressService = adressService;
@@ -83,30 +132,12 @@ namespace AdressAccounting.UI
 
         private void LoadAdresses()
         {
-            var adresses = _adressService.GetAllAdresses();
-            //checkbox filters
-            if (IsActualFilter)
-            {
-                adresses = _adressService.GetActualAdresses();
-            }
-            if (IsHasHistoryFilter)
-            {
-                adresses = _adressService.GetAdressesWithHistory();
-            }
-            if (!string.IsNullOrEmpty(SelectedAdressFilter))
-            {
-                if(int.TryParse(SelectedAdressFilter, out int number))
-                {
-                    adresses = _adressService.GetAdressByNumber(number);
-                }
-                else throw new ArgumentException("SelectedAdressFilter must be a valid number.");
-            }
-            if (SelectedStreetFilter != null)
-            {
-                adresses = _adressService.GetAdressesByStreet(SelectedStreetFilter);
-            }
+            var adresses = _adressService.GetFilteredAdresses(IsActualFilter, 
+                IsHasHistoryFilter, SelectedAdressFilter, SelectedStreetFilter, 
+                SelectedDateFromFilter, SelectedDateToFilter);
+            CountOfAdresses = adresses.Count().ToString();
 
-            Adresses = new ObservableCollection<Adress>(adresses.ToList());
+            Adresses = new ObservableCollection<Adress>(adresses);
         }
 
         private void LoadStreets()
@@ -130,6 +161,12 @@ namespace AdressAccounting.UI
         public void RedactAdress(Adress adress)
         {
             _adressService.RedactAdress(adress);
+            LoadAdresses();
+        }
+
+        public void DeleteAdress(Adress adress)
+        {
+            _adressService.DeleteAdress(adress);
             LoadAdresses();
         }
 

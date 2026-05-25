@@ -12,27 +12,73 @@
         <DockPanel>
             <ToolBarTray DockPanel.Dock="Top" Orientation="Horizontal">
                 <ToolBar>
-                    <Button Name="AddButton" Content="Додати" />
-                    <Button Name="EditButton" Content="Редагувати" />
-                    <Button Name="DeleteButton" Content="Видалити" />
+                    <Button Name="AddButton" Content="Додати" Click="AddButton_Click"/>
+                    <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click"/>
+                    <Button Name="UpdateButton" Content="Оновити" IsEnabled="{Binding IsAdressSelected}"
+                            Click="UpdateButton_Click"/>
+                    <Button Name="HistoryAddButton" Content="Додати історичний запис" 
+                            IsEnabled="{Binding IsAdressSelected}" Click="HistoryAddButton_Click"/>
+                    <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsAdressSelected}"
+                            Click="DeleteButton_Click"/>
+                    
                 </ToolBar>
             </ToolBarTray>
             <Grid DockPanel.Dock="Left" Width="200">
-                <StackPanel HorizontalAlignment="Center" Width="100">
-                    <ComboBox Name="StreetComboBox" Margin="5" ItemsSource="{Binding Streets}" 
+                <StackPanel HorizontalAlignment="Center" Width="200">
+                    <TextBlock Text="{Binding CountOfAdresses}"/>
+                        <ComboBox Name="StreetComboBox" Margin="5" ItemsSource="{Binding Streets}" 
                               SelectedItem="{Binding SelectedStreetFilter}" DisplayMemberPath="Name"/>
-                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SearchText}"/>
-                    <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" IsChecked="{Binding IsActualFilter}"/>
-                    <CheckBox Name="HasHistory" Content="Має історію змін" Margin="5" IsChecked="{Binding IsHasHistoryFilter}"/>
-                    <DatePicker Name="HistoryDatePickerFrom" Margin="5" IsEnabled="False" Text="Від"/>
-                    <DatePicker Name="HistoryDatePickerTo" Margin="5" IsEnabled="False" Text="До"/>
+                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SelectedAdressFilter, 
+                        UpdateSourceTrigger=PropertyChanged}"/>
+                    <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" 
+                              IsChecked="{Binding IsActualFilter}"/>
+                    <CheckBox Name="HasHistory" Content="Має історію змін" Margin="5" 
+                              IsChecked="{Binding IsHasHistoryFilter}"/>
+                    <TextBlock Text="Історія змін після дати"/>
+                    <DatePicker Name="HistoryDatePickerFrom" Margin="5" SelectedDate="{Binding SelectedDateFrom, 
+                        UpdateSourceTrigger=PropertyChanged}">
+                        <DatePicker.Style>
+                            <Style TargetType="DatePicker">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHasHistoryFilter}" Value="True">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DatePicker.Style>
+                    </DatePicker>
+                    <TextBlock Text="Історія змін до дати"/>
+                    <DatePicker Name="HistoryDatePickerTo" Margin="5" SelectedDate="{Binding SelectedDateTo, 
+                        UpdateSourceTrigger=PropertyChanged}">
+                        <DatePicker.Style>
+                            <Style TargetType="DatePicker">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsHasHistoryFilter}" Value="True">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DatePicker.Style>
+                    </DatePicker>
                 </StackPanel>
             </Grid>
-            <DataGrid Name="AdressDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" Margin="5" ItemsSource="{Binding Adresses}">
+            <DataGrid Name="AdressDataGrid" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" CanUserDeleteRows="False"
+                      CanUserResizeRows="False" CanUserReorderColumns="False"
+                      IsReadOnly="True" SelectionMode="Single"
+                      Margin="5" ItemsSource="{Binding Adresses}"
+                      SelectionUnit="FullRow" CanUserSortColumns="False"
+                      SelectedItem="{Binding SelectedAdress, UpdateSourceTrigger=PropertyChanged}"
+                      MouseDoubleClick="AdressDataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Адреса" Binding="{Binding Number}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Вулиця" Binding="{Binding Street.Name}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" IsReadOnly="True"
+                                        CanUserReorder="False" CanUserResize="False" Width="0.1*"/>
+                    <DataGridTextColumn Header="Адреса" Binding="{Binding Number}" IsReadOnly="True"
+                                        CanUserReorder="False" CanUserResize="False" Width="0.2*"/>
+                    <DataGridTextColumn Header="Вулиця" Binding="{Binding Street.Name}" IsReadOnly="True"
+                                        CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
