@@ -22,11 +22,12 @@ namespace AdressAccounting.UI
         public ObservableCollection<AdressRecord> AdressRecords { get; set; }
 
         private AdressService _service;
-        public AdressHistory(Adress adress,AdressService adressService)
+        public AdressHistory(IQueryable<AdressRecord> adressRecords, AdressService adressService)
         {
             InitializeComponent();
             _service = adressService;
-            this.AdressRecords = new ObservableCollection<AdressRecord>(_service.GetAdressHistory(adress));
+            this.AdressRecords = new ObservableCollection<AdressRecord>(adressRecords);
+            this.DataContext = this;
         }
     }
 }

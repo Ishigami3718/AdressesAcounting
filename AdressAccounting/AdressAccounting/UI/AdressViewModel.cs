@@ -146,9 +146,9 @@ namespace AdressAccounting.UI
             Streets = new ObservableCollection<Street>(streets);
         }
 
-        public void AddAdress(Adress adress)
+        public void AddAdress()
         {
-            _adressService.CreateAdress(adress);
+            new AdressCRWindow(_adressService, _streetService).ShowDialog();
             LoadAdresses();
         }
 

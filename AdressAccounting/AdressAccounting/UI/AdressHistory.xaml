@@ -19,9 +19,9 @@
                             CanUserReorder="False" CanUserResize="False" Width="0.3*"/>
                 <DataGridTextColumn Header="Вулиця" Binding="{Binding Adress.Street.Name}" IsReadOnly="True"
                             CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
-                <DataGridTextColumn Header="Від" Binding="{Binding DateFrom}" IsReadOnly="True"
+                <DataGridTextColumn Header="Від" Binding="{Binding DateFrom, StringFormat={}{0:dd.MM.yyyy}}" IsReadOnly="True"
             CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
-                <DataGridTextColumn Header="До" Binding="{Binding DateTo}" IsReadOnly="True"
+                <DataGridTextColumn Header="До" Binding="{Binding DateTo, StringFormat={}{0:dd.MM.yyyy}}" IsReadOnly="True"
             CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
             </DataGrid.Columns>
         </DataGrid>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,10 +22,12 @@ namespace AdressAccounting.UI
     {
         private readonly AdressViewModel _viewModel;
         private readonly AdressService _adressService;
+        private readonly StreetService _streetService;
         public AdressFrame(AdressService service, StreetService streetService)
         {
             InitializeComponent();
             _adressService = service;
+            _streetService = streetService;
             _viewModel = new AdressViewModel(service, streetService);
             DataContext = _viewModel;
         }
@@ -36,7 +39,8 @@ namespace AdressAccounting.UI
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            //_viewModel.AddAdress();
+            _viewModel.AddAdress();
+
         }
 
         private void HistoryAddButton_Click(object sender, RoutedEventArgs e)
@@ -56,12 +60,13 @@ namespace AdressAccounting.UI
 
         private void AdressDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (_viewModel.SelectedAdress.AdressRecords.Count < 1) 
+            var adressRecords = _adressService.GetAdressHistory(_viewModel.SelectedAdress);
+            if (adressRecords.Count() < 1) 
             { 
                 MessageBox.Show("У адреси немає історичних записів"); 
                 return; 
             }
-            new AdressHistory(_viewModel.SelectedAdress, _adressService).ShowDialog();
+            new AdressHistory(adressRecords, _adressService).ShowDialog();
         }
     }
 }

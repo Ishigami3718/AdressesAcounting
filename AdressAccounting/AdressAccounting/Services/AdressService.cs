@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AdressAccounting.Services
 {
@@ -85,6 +87,16 @@ namespace AdressAccounting.Services
             }
 
             return query;
+        }
+
+        public async Task<bool> BeUniqueNumberOnStreet(Adress address, int? number, CancellationToken cancellationToken)
+        {
+            bool exists = await _db.Adresses
+                .AnyAsync(a => a.StreetId == address.StreetId
+                            && a.Number == number
+                            && a.Id != address.Id,
+                          cancellationToken);
+            return !exists;
         }
         public void CreateAdress(Adress adress)
         {
