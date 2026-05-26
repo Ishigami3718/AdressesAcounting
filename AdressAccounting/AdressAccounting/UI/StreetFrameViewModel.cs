@@ -13,6 +13,111 @@ namespace AdressAccounting.UI
     
         private ObservableCollection<Street> _streets;
         private Street _selectedStreet;
+        private bool _isHasMergeParentsFilter;
+        private bool _isHasSplitParentFilter;
+        private bool _isHasHistoryFilter;
+        private bool _isSortedByNameFilter;
+        private DateTime? _selectedDateFromFilter;
+        private DateTime? _selectedDateToFilter;
+        private bool _isStreetSelected;
+        private string _nameSearchStreetFilter;
+        private string _countOfStreets;
+
+        public string NameSearchStreetFilter
+        {
+            get { return _nameSearchStreetFilter; }
+            set
+            {
+                _nameSearchStreetFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(NameSearchStreetFilter));
+            }
+        }
+
+        public bool IsHasMergeParentsFilter
+        {
+            get { return _isHasMergeParentsFilter; }
+            set
+            {
+                _isHasMergeParentsFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(IsHasMergeParentsFilter));
+            }
+        }
+
+        public bool IsHasSplitParentFilter
+        {
+            get { return _isHasSplitParentFilter; }
+            set
+            {
+                _isHasSplitParentFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(IsHasSplitParentFilter));
+            }
+        }
+
+        public bool IsHasHistoryFilter
+        {
+            get { return _isHasHistoryFilter; }
+            set
+            {
+                _isHasHistoryFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(IsHasHistoryFilter));
+            }
+        }
+
+        public bool IsSortedByNameFilter
+        {
+            get { return _isSortedByNameFilter; }
+            set
+            {
+                _isSortedByNameFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(IsSortedByNameFilter));
+            }
+        }
+
+        public bool IsStreetSelected
+        {
+            get { return _isStreetSelected; }
+            set
+            {
+                _isStreetSelected = value;
+                OnPropertyChanged(nameof(IsStreetSelected));
+            }
+        }
+
+        public string CountOfStreets
+        {
+            get { return $"Кількість адрес: {_countOfStreets}"; }
+            set
+            {
+                _countOfStreets = value;
+                OnPropertyChanged(nameof(CountOfStreets));
+            }
+        }
+        public DateTime? SelectedDateFromFilter
+        {
+            get { return _selectedDateFromFilter; }
+            set
+            {
+                _selectedDateFromFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(SelectedDateFromFilter));
+            }
+        }
+
+        public DateTime? SelectedDateToFilter
+        {
+            get { return _selectedDateToFilter; }
+            set
+            {
+                _selectedDateToFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(SelectedDateToFilter));
+            }
+        }
 
         public Street SelectedStreet
         {
@@ -20,9 +125,11 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedStreet = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsStreetSelected));
+                OnPropertyChanged(nameof(SelectedStreet));
             }
         }
+
 
         public ObservableCollection<Street> Streets
         {
@@ -30,7 +137,7 @@ namespace AdressAccounting.UI
             set
             {
                 _streets = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(Streets));
             }
         }
 
@@ -40,8 +147,22 @@ namespace AdressAccounting.UI
         {
             _streetService = streetService;
             Streets = new ObservableCollection<Street>(_streetService.GetAllStreets());
+            CountOfStreets = Streets.Count.ToString();
         }
 
+        private void LoadStreets()
+        {
+            var streets = _streetService.GetStreetByFilters(NameSearchStreetFilter, 
+                IsHasMergeParentsFilter, IsHasSplitParentFilter, 
+                IsHasHistoryFilter,
+                IsSortedByNameFilter,
+                SelectedDateFromFilter.HasValue ?
+                DateOnly.FromDateTime(SelectedDateFromFilter.Value) : null,
+                SelectedDateToFilter.HasValue ?
+                DateOnly.FromDateTime(SelectedDateToFilter.Value) : null);
+            CountOfStreets = streets.Count().ToString();
+            Streets = new ObservableCollection<Street>(streets);
+        }
         public void AddParent(Street street, IEnumerable<Street> parents)
         {
             if(_streetService.GetParentStreetFromSplit(street) != null 

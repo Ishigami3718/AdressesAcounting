@@ -28,10 +28,8 @@
             <Grid DockPanel.Dock="Left" Width="200">
                 <StackPanel HorizontalAlignment="Center" Width="200">
                     <TextBlock Text="{Binding CountOfStreets}"/>
-                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SelectedStreetFilter, 
+                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding NameSearchStreetFilter, 
                 UpdateSourceTrigger=PropertyChanged}"/>
-                    <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" 
-                      IsChecked="{Binding IsActualFilter}"/>
                     <CheckBox Name="HasSplitParentCheckBox" Content="Має одного батька" Margin="5" 
                       IsChecked="{Binding IsHasSplitParentFilter}"/>
                     <CheckBox Name="HasMergeParentsСheckBox" Content="Має декількох батьків" Margin="5" 
@@ -39,7 +37,7 @@
                     <CheckBox Name="HasHistoryСheckBox" Content="Має історію змін" Margin="5" 
                       IsChecked="{Binding IsHasHistoryFilter}"/>
                     <CheckBox Name="SortCheckBox" Content="Сортувати" Margin="5" 
-                      IsChecked="{Binding IsHasHistoryFilter}"/>
+                      IsChecked="{Binding IsSortedByNameFilter}"/>
                     <TextBlock Text="Історія змін після дати"/>
                     <DatePicker Name="HistoryDatePickerFrom" Margin="5" SelectedDate="{Binding SelectedDateFromFilter, 
                 UpdateSourceTrigger=PropertyChanged}">

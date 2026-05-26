@@ -23,17 +23,14 @@ namespace AdressAccounting.Services
             AddStreet(new Street { Name = name});
         }
 
-        public IQueryable<Street> GetStreetByfilters(string name, bool isActual, 
-            bool hasSplitParent, bool hasMergeParents, bool hasHistory, DateOnly? dateFrom, DateOnly? dateTo)
+        public IQueryable<Street> GetStreetByFilters(string name,
+            bool hasSplitParent, bool hasMergeParents, bool hasHistory, bool isSortedByName,
+            DateOnly? dateFrom, DateOnly? dateTo)
         {
             var query = GetAllStreets();
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(s => s.Name.ToLower().Contains(name.ToLower()));
-            }
-            if (isActual)
-            {
-                query = query.Where(s => !s.StreetNameRecordsStreets.Any() || s.StreetNameRecordsStreets.All(r => r.StreetNameRecords.DateTo >= DateOnly.FromDateTime(DateTime.Now)));
             }
             if (hasSplitParent)
             {
@@ -47,13 +44,19 @@ namespace AdressAccounting.Services
             {
                 query = query.Where(s => s.StreetNameRecordsStreets.Any());
             }
-            if(dateFrom.HasValue)
+            if(isSortedByName)
             {
-
+                query = query.OrderBy(s => s.Name); 
+            }
+            if (dateFrom.HasValue)
+            {
+                query = query.Where(s => s.StreetNameRecordsStreets
+                .Any(sn => sn.StreetNameRecords.DateFrom >= dateFrom.Value));
             }
             if(dateTo.HasValue)
             {
-
+                query = query.Where(s => s.StreetNameRecordsStreets
+                .Any(sn => sn.StreetNameRecords.DateTo <= dateTo.Value));
             }
             return query;
         }
