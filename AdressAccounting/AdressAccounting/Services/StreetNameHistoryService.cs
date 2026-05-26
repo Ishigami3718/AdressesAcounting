@@ -12,7 +12,7 @@ namespace AdressAccounting.Services
         {
             db = context;
         }
-        public List<StreetNameRecord> GetNameHistory(Street street)
+        public IQueryable<StreetNameRecord> GetNameHistory(Street street)
         {
             var sql = @"
                    SELECT s.*
@@ -20,8 +20,7 @@ namespace AdressAccounting.Services
                    JOIN ""StreetNameRecordsStreet"" snrs ON s.""id"" = snrs.""streetNameRecordsId""
                    WHERE snrs.""streetId"" = @streetId";
             return db.StreetNameRecords
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
-                    .ToList();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Text;
 
 namespace AdressAccounting.Validators
 {
-    public class BaseAdressRecordsValidator:AbstractValidator<AdressRecord>
+    public class AdressRecordsValidator:AbstractValidator<AdressRecord>
     {
         private readonly AdressAccountingContext _db;
-        public BaseAdressRecordsValidator(AdressAccountingContext db)
+        public AdressRecordsValidator(AdressAccountingContext db)
         {
             _db = db;
             RuleFor(x => x.DateFrom)

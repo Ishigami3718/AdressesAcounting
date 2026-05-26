@@ -23,6 +23,40 @@ namespace AdressAccounting.Services
             AddStreet(new Street { Name = name});
         }
 
+        public IQueryable<Street> GetStreetByfilters(string name, bool isActual, 
+            bool hasSplitParent, bool hasMergeParents, bool hasHistory, DateOnly? dateFrom, DateOnly? dateTo)
+        {
+            var query = GetAllStreets();
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.Name.ToLower().Contains(name.ToLower()));
+            }
+            if (isActual)
+            {
+                query = query.Where(s => !s.StreetNameRecordsStreets.Any() || s.StreetNameRecordsStreets.All(r => r.StreetNameRecords.DateTo >= DateOnly.FromDateTime(DateTime.Now)));
+            }
+            if (hasSplitParent)
+            {
+                query = query.Where(s => s.SplitResults.Any());
+            }
+            if (hasMergeParents)
+            {
+                query = query.Where(s => s.MergeRecords.Any());
+            }
+            if (hasHistory)
+            {
+                query = query.Where(s => s.StreetNameRecordsStreets.Any());
+            }
+            if(dateFrom.HasValue)
+            {
+
+            }
+            if(dateTo.HasValue)
+            {
+
+            }
+            return query;
+        }
         public IQueryable<Street> SearchByName(string name)
         {
             return db.Streets.Where(s => s.Name.ToLower().Contains(name.ToLower()));
@@ -74,7 +108,17 @@ namespace AdressAccounting.Services
             return db.Streets.OrderBy(s => s.Name);
         }
 
-        public Street GetParentStreetFromSplit(Street street)
+        public IQueryable<Street> GetParentStreets(Street street)
+        {
+            return GetParentStreetFromSplit(street).Union(GetParentStreetsFromMerge(street));
+        }
+
+        public IQueryable<Street> GetChildStreets(Street street)
+        {
+            return GetChildStreetsFromSplit(street).Union(GetChildStreetFromMerge(street));
+        }
+
+        public IQueryable<Street> GetParentStreetFromSplit(Street street)
         {
             /*string id = street.Id.ToString();
             string sql = @"
@@ -90,13 +134,12 @@ namespace AdressAccounting.Services
             return db.Streets.FromSqlRaw(sql).ToList().FirstOrDefault();*/
             var sql = @"
                    SELECT s.*
-                   FROM ""Streets"" s
-                   JOIN ""SplitRecord"" sr ON s.id = sr.""streetIdSplittedStreet""
+                   FROM ""Street"" s
+                   JOIN ""SplitRecords"" sr ON s.id = sr.""streetId(splitted street)""
                    JOIN ""SplitResults"" r ON r.""splitRecordsId"" = sr.id
                    WHERE r.""streetId"" = @streetId";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
-                    .FirstOrDefault();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
 
         public IQueryable<Street> GetChildStreetsFromSplit(Street street)
@@ -105,9 +148,9 @@ namespace AdressAccounting.Services
             var sql = @"
                    SELECT s.*
                    FROM ""Street"" s
-                   JOIN ""SplitRecords"" r ON sr.""splitRecordsId"" = r.id
                    JOIN ""SplitResults"" sr ON s.id = sr.""streetId""
-                   WHERE r.""streetIdSplittedStreet"" = @streetId";
+                   JOIN ""SplitRecords"" r ON sr.""splitRecordsId"" = r.id                   
+                   WHERE r.""streetId(splitted street)"" = @streetId";
             return db.Streets
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
@@ -125,17 +168,16 @@ namespace AdressAccounting.Services
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
 
-        public Street GetChildStreetFromMerge(Street street)
+        public IQueryable<Street> GetChildStreetFromMerge(Street street)
         {
             var sql = @"
                    SELECT s.*
-                   FROM Street s
-                   JOIN ""MergeRecords"" m ON s.id = m.""streetIdResultOfMerging""
+                   FROM ""Street"" s
+                   JOIN ""MergeRecords"" m ON s.id = m.""streetId(result of merging)""
                    JOIN ""MergedStreets"" ms ON ms.""mergeRecordsId"" = m.id
                    WHERE ms.""streetId"" = @streetId";
             return db.Streets
-                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id))
-                    .FirstOrDefault();
+                    .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
 
 

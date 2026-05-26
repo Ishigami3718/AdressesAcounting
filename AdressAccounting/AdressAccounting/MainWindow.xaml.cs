@@ -25,6 +25,7 @@ namespace AdressAccounting
         private readonly SplitService _splitService;
         private readonly StreetNameHistoryService _streetNameHistoryService;
         private readonly AdressService _adressService;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -53,7 +54,19 @@ namespace AdressAccounting
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            
         }
+
+        private void MenuItemAdresses_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService));
+        }
+
+        private void MenuItemStreets_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new UI.StreetFrame(_streetService, _streetNameHistoryService));
+        }
+
+        
     }
 }

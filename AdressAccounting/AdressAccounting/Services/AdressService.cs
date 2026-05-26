@@ -63,7 +63,7 @@ namespace AdressAccounting.Services
 
             if (hasHistory)
             {
-                query = query.Where(a => a.AdressRecords.Any());
+                query = query.Where(a => a.AdressRecords.Count() > 1);
             }
 
             if (!string.IsNullOrEmpty(numberFilter) && int.TryParse(numberFilter, out int number))

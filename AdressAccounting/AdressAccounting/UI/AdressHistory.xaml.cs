@@ -26,7 +26,7 @@ namespace AdressAccounting.UI
         {
             InitializeComponent();
             _service = adressService;
-            this.AdressRecords = new ObservableCollection<AdressRecord>(adressRecords);
+            this.AdressRecords = new ObservableCollection<AdressRecord>(adressRecords.OrderBy(ar => ar.DateFrom));
             this.DataContext = this;
         }
     }

@@ -18,8 +18,8 @@ namespace AdressAccounting.UI
         private bool _isHasHistoryFilter;
         private string _selectedAdressFilter;
         private Street _selectedStreetFilter;
-        private DateOnly? _selectedDateFromFilter;
-        private DateOnly? _selectedDateToFilter;
+        private DateTime? _selectedDateFromFilter;
+        private DateTime? _selectedDateToFilter;
         private Adress _selectedAdress;
         private string _countOfAdresses;
         public bool IsAdressSelected => SelectedAdress != null;
@@ -79,7 +79,7 @@ namespace AdressAccounting.UI
             }
         }
 
-        public DateOnly? SelectedDateFromFilter
+        public DateTime? SelectedDateFromFilter
         {
             get => _selectedDateFromFilter;
             set
@@ -90,7 +90,7 @@ namespace AdressAccounting.UI
             }
         }
 
-        public DateOnly? SelectedDateToFilter
+        public DateTime? SelectedDateToFilter
         {
             get => _selectedDateToFilter;
             set
@@ -134,7 +134,10 @@ namespace AdressAccounting.UI
         {
             var adresses = _adressService.GetFilteredAdresses(IsActualFilter, 
                 IsHasHistoryFilter, SelectedAdressFilter, SelectedStreetFilter, 
-                SelectedDateFromFilter, SelectedDateToFilter);
+                SelectedDateFromFilter.HasValue 
+                ? DateOnly.FromDateTime((DateTime)SelectedDateFromFilter) : (DateOnly?)null, 
+                SelectedDateToFilter.HasValue 
+                ? DateOnly.FromDateTime((DateTime)SelectedDateToFilter) : (DateOnly?)null);
             CountOfAdresses = adresses.Count().ToString();
 
             Adresses = new ObservableCollection<Adress>(adresses);

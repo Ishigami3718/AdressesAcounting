@@ -15,8 +15,8 @@ namespace AdressAccounting.UI
         public ObservableCollection<Street> Streets { get; set; }
         public bool IsActual { get; set; }
 
-        private DateOnly? _selectedDateFrom;
-        public DateOnly? SelectedDateFrom
+        private DateTime? _selectedDateFrom;
+        public DateTime? SelectedDateFrom
         {
             get => _selectedDateFrom;
             set
@@ -111,8 +111,10 @@ namespace AdressAccounting.UI
                 StreetId = SelectedStreet?.Id ?? 0,
                 IsActual = IsActual,
                 AdressRecords = new List<AdressRecord> { new AdressRecord
-                { DateFrom = SelectedDateFrom } },
-                Number = string.IsNullOrEmpty(this.Number) ? 0 : int.TryParse(this.Number, out var number) ? number : 0
+                { DateFrom = SelectedDateFrom.HasValue ?
+                DateOnly.FromDateTime((DateTime)SelectedDateFrom) : (DateOnly?)null } },
+                Number = string.IsNullOrEmpty(this.Number) ? 0 : 
+                int.TryParse(this.Number, out var number) ? number : 0
             };
             var validationResult = await _validator.ValidateAsync(newAdress);
             if (validationResult.IsValid && IsDateFromValid)

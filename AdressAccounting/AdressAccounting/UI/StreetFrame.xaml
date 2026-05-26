@@ -1,4 +1,4 @@
-﻿<Page x:Class="AdressAccounting.UI.AdressFrame"
+﻿<Page x:Class="AdressAccounting.UI.StreetFrame"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:AdressAccounting.UI"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="AdressFrame">
+      Title="StreetFrame">
 
     <Grid>
         <DockPanel>
@@ -14,29 +14,35 @@
                 <ToolBar>
                     <Button Name="AddButton" Content="Додати" Click="AddButton_Click"/>
                     <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click"/>
-                    <Button Name="UpdateButton" Content="Оновити" IsEnabled="{Binding IsAdressSelected}"
-                            Click="UpdateButton_Click"/>
+                    <Button Name="UpdateButton" Content="Оновити" IsEnabled="{Binding IsStreetSelected}"
+                    Click="UpdateButton_Click"/>
                     <Button Name="HistoryAddButton" Content="Додати історичний запис" 
-                            IsEnabled="{Binding IsAdressSelected}" Click="HistoryAddButton_Click"/>
-                    <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsAdressSelected}"
-                            Click="DeleteButton_Click"/>
-                    
+                    IsEnabled="{Binding IsAdressSelected}" Click="HistoryAddButton_Click"/>
+                    <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsStreetSelected}"
+                    Click="DeleteButton_Click"/>
+                    <Button Name="AddParentsButton" Content="Додати батьківські адреси" IsEnabled="{Binding IsStreetSelected}"
+                    Click="AddParentsButton_Click"/>
+
                 </ToolBar>
             </ToolBarTray>
             <Grid DockPanel.Dock="Left" Width="200">
                 <StackPanel HorizontalAlignment="Center" Width="200">
-                    <TextBlock Text="{Binding CountOfAdresses}"/>
-                        <ComboBox Name="StreetComboBox" Margin="5" ItemsSource="{Binding Streets}" 
-                              SelectedItem="{Binding SelectedStreetFilter}" DisplayMemberPath="Name"/>
-                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SelectedAdressFilter, 
-                        UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="{Binding CountOfStreets}"/>
+                    <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SelectedStreetFilter, 
+                UpdateSourceTrigger=PropertyChanged}"/>
                     <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" 
-                              IsChecked="{Binding IsActualFilter}"/>
-                    <CheckBox Name="HasHistory" Content="Має історію змін" Margin="5" 
-                              IsChecked="{Binding IsHasHistoryFilter}"/>
+                      IsChecked="{Binding IsActualFilter}"/>
+                    <CheckBox Name="HasSplitParentCheckBox" Content="Має одного батька" Margin="5" 
+                      IsChecked="{Binding IsHasSplitParentFilter}"/>
+                    <CheckBox Name="HasMergeParentsСheckBox" Content="Має декількох батьків" Margin="5" 
+                      IsChecked="{Binding IsHasMergeParentsFilter}"/>
+                    <CheckBox Name="HasHistoryСheckBox" Content="Має історію змін" Margin="5" 
+                      IsChecked="{Binding IsHasHistoryFilter}"/>
+                    <CheckBox Name="SortCheckBox" Content="Сортувати" Margin="5" 
+                      IsChecked="{Binding IsHasHistoryFilter}"/>
                     <TextBlock Text="Історія змін після дати"/>
                     <DatePicker Name="HistoryDatePickerFrom" Margin="5" SelectedDate="{Binding SelectedDateFromFilter, 
-                        UpdateSourceTrigger=PropertyChanged}">
+                UpdateSourceTrigger=PropertyChanged}">
                         <DatePicker.Style>
                             <Style TargetType="DatePicker">
                                 <Setter Property="IsEnabled" Value="False"/>
@@ -50,7 +56,7 @@
                     </DatePicker>
                     <TextBlock Text="Історія змін до дати"/>
                     <DatePicker Name="HistoryDatePickerTo" Margin="5" SelectedDate="{Binding SelectedDateToFilter, 
-                        UpdateSourceTrigger=PropertyChanged}">
+                UpdateSourceTrigger=PropertyChanged}">
                         <DatePicker.Style>
                             <Style TargetType="DatePicker">
                                 <Setter Property="IsEnabled" Value="False"/>
@@ -65,20 +71,18 @@
                 </StackPanel>
             </Grid>
             <DataGrid Name="AdressDataGrid" AutoGenerateColumns="False" 
-                      CanUserAddRows="False" CanUserDeleteRows="False"
-                      CanUserResizeRows="False" CanUserReorderColumns="False"
-                      IsReadOnly="True" SelectionMode="Single"
-                      Margin="5" ItemsSource="{Binding Adresses}"
-                      SelectionUnit="FullRow" CanUserSortColumns="False"
-                      SelectedItem="{Binding SelectedAdress, UpdateSourceTrigger=PropertyChanged}"
-                      MouseDoubleClick="AdressDataGrid_MouseDoubleClick">
+              CanUserAddRows="False" CanUserDeleteRows="False"
+              CanUserResizeRows="False" CanUserReorderColumns="False"
+              IsReadOnly="True" SelectionMode="Single"
+              Margin="5" ItemsSource="{Binding Streets}"
+              SelectionUnit="FullRow" CanUserSortColumns="False"
+              SelectedItem="{Binding SelectedStreet, UpdateSourceTrigger=PropertyChanged}"
+              MouseDoubleClick="AdressDataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding Id}" IsReadOnly="True"
-                                        CanUserReorder="False" CanUserResize="False" Width="0.1*"/>
-                    <DataGridTextColumn Header="Адреса" Binding="{Binding Number}" IsReadOnly="True"
-                                        CanUserReorder="False" CanUserResize="False" Width="0.2*"/>
-                    <DataGridTextColumn Header="Вулиця" Binding="{Binding Street.Name}" IsReadOnly="True"
-                                        CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
+                                CanUserReorder="False" CanUserResize="False" Width="0.1*"/>
+                    <DataGridTextColumn Header="Назва вулиці" Binding="{Binding Name}" IsReadOnly="True"
+                                CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
