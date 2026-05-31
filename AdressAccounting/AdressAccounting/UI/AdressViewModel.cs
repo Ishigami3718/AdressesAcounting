@@ -145,13 +145,20 @@ namespace AdressAccounting.UI
 
         private void LoadStreets()
         {
-            var streets = _streetService.GetAllStreets();
+            var streets = _streetService.GetAllStreets().ToList();
+            streets.Insert(0, new Street { Name = "Всі вулиці", Id = 0 });
             Streets = new ObservableCollection<Street>(streets);
         }
 
         public void AddAdress()
         {
             new AdressCRWindow(_adressService, _streetService).ShowDialog();
+            LoadAdresses();
+        }
+
+        public void AddAdressOnSameArea()
+        {
+            new AdressCRWindow(_adressService, _streetService, SelectedAdress).ShowDialog();
             LoadAdresses();
         }
 

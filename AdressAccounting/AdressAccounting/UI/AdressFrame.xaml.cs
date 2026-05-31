@@ -23,11 +23,13 @@ namespace AdressAccounting.UI
         private readonly AdressViewModel _viewModel;
         private readonly AdressService _adressService;
         private readonly StreetService _streetService;
-        public AdressFrame(AdressService service, StreetService streetService)
+        private readonly StreetNameHistoryService _streetNameHistoryService;
+        public AdressFrame(AdressService service, StreetService streetService, StreetNameHistoryService streetNameHistoryService)
         {
             InitializeComponent();
             _adressService = service;
             _streetService = streetService;
+            _streetNameHistoryService = streetNameHistoryService;
             _viewModel = new AdressViewModel(service, streetService);
             DataContext = _viewModel;
         }
@@ -40,7 +42,7 @@ namespace AdressAccounting.UI
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.AddAdress();
-
+            Debug.WriteLine("Add button clicked");
         }
 
         private void HistoryAddButton_Click(object sender, RoutedEventArgs e)
@@ -67,6 +69,11 @@ namespace AdressAccounting.UI
                 return; 
             }
             new AdressHistory(adressRecords, _adressService).ShowDialog();
+        }
+
+        private void AddSecondAdressOnArea_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.AddAdressOnSameArea();
         }
     }
 }

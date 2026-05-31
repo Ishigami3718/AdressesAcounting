@@ -38,19 +38,23 @@ namespace AdressAccounting
                 MessageBox.Show("Помилка підключення бази даних: " + ex.Message);
                 return;
             }
-            _mergeService = new MergeService(_db);
-            _splitService = new SplitService(_db);
-            _streetService = new StreetService(_db);
-            _adressService = new AdressService(_db);
-            _streetNameHistoryService = new StreetNameHistoryService(_db);
-            MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService));
+            try
+            {
+                _mergeService = new MergeService(_db);
+                _splitService = new SplitService(_db);
+                _streetService = new StreetService(_db);
+                _adressService = new AdressService(_db);
+                _streetNameHistoryService = new StreetNameHistoryService(_db);
+                MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService, _streetNameHistoryService));
+            }
+            catch(Exception ex) { MessageBox.Show("Помилка підключення бази даних: " + ex.Message);return; }
 
             /*foreach( var street in streetService.GetParentStreetsFromMerge(db.Streets.ToList()[2]))
             {
                 Debug.WriteLine($"{street.Id}     {street.Name}");
             }*/
 
-        }
+            }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -59,7 +63,7 @@ namespace AdressAccounting
 
         private void MenuItemAdresses_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService));
+            MainFrame.Navigate(new UI.AdressFrame(_adressService, _streetService, _streetNameHistoryService));
         }
 
         private void MenuItemStreets_Click(object sender, RoutedEventArgs e)

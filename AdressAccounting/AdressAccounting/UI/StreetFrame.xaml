@@ -13,11 +13,10 @@
             <ToolBarTray DockPanel.Dock="Top" Orientation="Horizontal">
                 <ToolBar>
                     <Button Name="AddButton" Content="Додати" Click="AddButton_Click"/>
-                    <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click"/>
+                    <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click"
+                            IsEnabled="{Binding IsStreetSelected}"/>
                     <Button Name="UpdateButton" Content="Оновити" IsEnabled="{Binding IsStreetSelected}"
                     Click="UpdateButton_Click"/>
-                    <Button Name="HistoryAddButton" Content="Додати історичний запис" 
-                    IsEnabled="{Binding IsAdressSelected}" Click="HistoryAddButton_Click"/>
                     <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsStreetSelected}"
                     Click="DeleteButton_Click"/>
                     <Button Name="AddParentsButton" Content="Додати батьківські адреси" IsEnabled="{Binding IsStreetSelected}"
@@ -34,6 +33,8 @@
                       IsChecked="{Binding IsHasSplitParentFilter}"/>
                     <CheckBox Name="HasMergeParentsСheckBox" Content="Має декількох батьків" Margin="5" 
                       IsChecked="{Binding IsHasMergeParentsFilter}"/>
+                    <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" 
+  IsChecked="{Binding IsActualFilter}"/>
                     <CheckBox Name="HasHistoryСheckBox" Content="Має історію змін" Margin="5" 
                       IsChecked="{Binding IsHasHistoryFilter}"/>
                     <CheckBox Name="SortCheckBox" Content="Сортувати" Margin="5" 

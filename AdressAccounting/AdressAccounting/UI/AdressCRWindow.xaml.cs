@@ -21,11 +21,20 @@ namespace AdressAccounting.UI
     {
 
         private readonly AdressCRwindowViewModel _viewModel;
+        private bool _isEditMode;
 
         public AdressCRWindow(AdressService service, StreetService streetService)
         {
             _viewModel = new AdressCRwindowViewModel(service, streetService);
             InitializeComponent();
+            this.DataContext = _viewModel;
+        }
+
+        public AdressCRWindow(AdressService service, StreetService streetService, Adress adress)
+        {
+            _viewModel = new AdressCRwindowViewModel(service, streetService, adress);
+            InitializeComponent();
+            ActualCheckBox.Visibility = Visibility.Collapsed;
             this.DataContext = _viewModel;
         }
 

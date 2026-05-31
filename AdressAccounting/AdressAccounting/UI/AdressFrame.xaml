@@ -13,21 +13,27 @@
             <ToolBarTray DockPanel.Dock="Top" Orientation="Horizontal">
                 <ToolBar>
                     <Button Name="AddButton" Content="Додати" Click="AddButton_Click"/>
-                    <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click"/>
+                    <Button Name="EditButton" Content="Редагувати" Click="EditButton_Click" 
+                            IsEnabled="{Binding IsAdressSelected}"/>
                     <Button Name="UpdateButton" Content="Оновити" IsEnabled="{Binding IsAdressSelected}"
                             Click="UpdateButton_Click"/>
                     <Button Name="HistoryAddButton" Content="Додати історичний запис" 
                             IsEnabled="{Binding IsAdressSelected}" Click="HistoryAddButton_Click"/>
                     <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsAdressSelected}"
                             Click="DeleteButton_Click"/>
-                    
+                    <Button Name="AddSecondAdressOnArea" Content="Додати другу адресу на ділянці" 
+                            IsEnabled="{Binding IsAdressSelected}"
+                            Click="AddSecondAdressOnArea_Click"/>
+
                 </ToolBar>
             </ToolBarTray>
             <Grid DockPanel.Dock="Left" Width="200">
                 <StackPanel HorizontalAlignment="Center" Width="200">
                     <TextBlock Text="{Binding CountOfAdresses}"/>
-                        <ComboBox Name="StreetComboBox" Margin="5" ItemsSource="{Binding Streets}" 
+                    <ComboBox Name="StreetComboBox" Margin="5" ItemsSource="{Binding Streets}" 
                               SelectedItem="{Binding SelectedStreetFilter}" DisplayMemberPath="Name"/>
+
+                    <TextBlock Text="Пошук по номеру:"/>
                     <TextBox Name="SearchTextBox" Margin="5" Text="{Binding SelectedAdressFilter, 
                         UpdateSourceTrigger=PropertyChanged}"/>
                     <CheckBox Name="ActualCheckBox" Content="Актуальні" Margin="5" 

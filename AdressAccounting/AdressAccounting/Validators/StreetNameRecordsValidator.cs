@@ -7,10 +7,8 @@ namespace AdressAccounting.Validators
 {
     public class StreetNameRecordsValidator:AbstractValidator<StreetNameRecord>
     {
-        private readonly AdressAccountingContext _db;
-        public StreetNameRecordsValidator(AdressAccountingContext db)
+        public StreetNameRecordsValidator()
         {
-            _db = db;
             RuleFor(s => s.Name).NotEmpty().WithMessage("Назва не може бути порожньою");
             RuleFor(s => s.DateTo).NotEmpty().WithMessage("Дата не може бути порожньою")
                 .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now))

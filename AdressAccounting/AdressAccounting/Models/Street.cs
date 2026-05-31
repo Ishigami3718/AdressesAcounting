@@ -9,6 +9,8 @@ public partial class Street
 
     public string? Name { get; set; }
 
+    public bool IsActual { get; set; }
+
     public virtual ICollection<Adress> Adresses { get; set; } = new List<Adress>();
 
     public virtual ICollection<MergeRecord> MergeRecords { get; set; } = new List<MergeRecord>();

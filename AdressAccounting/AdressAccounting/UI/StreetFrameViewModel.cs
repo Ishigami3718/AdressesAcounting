@@ -22,6 +22,7 @@ namespace AdressAccounting.UI
         private bool _isStreetSelected;
         private string _nameSearchStreetFilter;
         private string _countOfStreets;
+        private bool _isActualFilter;
 
         public string NameSearchStreetFilter
         {
@@ -141,18 +142,31 @@ namespace AdressAccounting.UI
             }
         }
 
+        public bool IsActualFilter
+        {
+            get { return _isActualFilter; }
+            set
+            {
+                _isActualFilter = value;
+                LoadStreets();
+                OnPropertyChanged(nameof(IsActualFilter));
+            }
+        }
+
 
         private readonly StreetService _streetService;
-        public StreetFrameViewModel(StreetService streetService)
+        private readonly StreetNameHistoryService _streetNameHistoryService;
+        public StreetFrameViewModel(StreetService streetService, StreetNameHistoryService streetNameHistoryService)
         {
             _streetService = streetService;
-            Streets = new ObservableCollection<Street>(_streetService.GetAllStreets());
+            _streetNameHistoryService = streetNameHistoryService;
+            LoadStreets();
             CountOfStreets = Streets.Count.ToString();
         }
 
         private void LoadStreets()
         {
-            var streets = _streetService.GetStreetByFilters(NameSearchStreetFilter, 
+            var streets = _streetService.GetStreetByFilters(NameSearchStreetFilter, IsActualFilter,
                 IsHasMergeParentsFilter, IsHasSplitParentFilter, 
                 IsHasHistoryFilter,
                 IsSortedByNameFilter,
@@ -166,7 +180,7 @@ namespace AdressAccounting.UI
         public void AddParent(Street street, IEnumerable<Street> parents)
         {
             if(_streetService.GetParentStreetFromSplit(street) != null 
-                || _streetService.GetParentStreetsFromMerge(street).Count() > 0)
+                && _streetService.GetParentStreetsFromMerge(street).Count() > 0)
             {
                 MessageBox.Show("Вибрана вулиця уже має батьківські адреси");
                 return;
@@ -176,6 +190,32 @@ namespace AdressAccounting.UI
                 //call window to select parent street
             }
         }
+
+        public void AddChildrens(Street street, IEnumerable<Street> childrens)
+        {
+            if (_streetService.GetChildStreetFromMerge(street) != null
+                && _streetService.GetChildStreetsFromSplit(street).Count()>0)
+            {
+
+            }
+            else
+            {
+                //
+            }
+        }
+
+        public void AddStreet()
+        {
+            new StreetCRWindow(_streetService, _streetNameHistoryService).ShowDialog();
+            LoadStreets();
+        }
+
+        public void EditStreet(Street street)
+        {
+            new StreetCRWindow(_streetService, street).ShowDialog();
+            LoadStreets();
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName]string propertyName=null)
         {

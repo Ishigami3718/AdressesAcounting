@@ -187,6 +187,7 @@ public partial class AdressAccountingContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
                 .HasColumnName("id");
+            entity.Property(e => e.IsActual).HasColumnName("isActual").HasDefaultValue(true).IsRequired();
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");

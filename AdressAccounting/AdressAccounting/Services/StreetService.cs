@@ -20,17 +20,23 @@ namespace AdressAccounting.Services
 
         public void CreateStreet(string name)
         {
-            AddStreet(new Street { Name = name});
+            AddStreet(new Street { Name = name, IsActual = true });
         }
 
-        public IQueryable<Street> GetStreetByFilters(string name,
+        
+
+        public IQueryable<Street> GetStreetByFilters(string name, bool isActual,
             bool hasSplitParent, bool hasMergeParents, bool hasHistory, bool isSortedByName,
             DateOnly? dateFrom, DateOnly? dateTo)
         {
-            var query = GetAllStreets();
+            IQueryable<Street> query = GetAllStreets().OrderBy(s => s.Id);
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(s => s.Name.ToLower().Contains(name.ToLower()));
+            }
+            if (isActual)
+            {
+                query = query.Where(s => s.IsActual);
             }
             if (hasSplitParent)
             {
@@ -48,12 +54,12 @@ namespace AdressAccounting.Services
             {
                 query = query.OrderBy(s => s.Name); 
             }
-            if (dateFrom.HasValue)
+            if (dateFrom.HasValue && hasHistory)
             {
                 query = query.Where(s => s.StreetNameRecordsStreets
                 .Any(sn => sn.StreetNameRecords.DateFrom >= dateFrom.Value));
             }
-            if(dateTo.HasValue)
+            if(dateTo.HasValue && hasHistory)
             {
                 query = query.Where(s => s.StreetNameRecordsStreets
                 .Any(sn => sn.StreetNameRecords.DateTo <= dateTo.Value));
@@ -65,6 +71,10 @@ namespace AdressAccounting.Services
             return db.Streets.Where(s => s.Name.ToLower().Contains(name.ToLower()));
         }
 
+        public IQueryable<Street> FilterByIsActual()
+        {
+            return db.Streets.Where(s => s.IsActual);
+        }
         public IQueryable<Street> FilterByHasNameHistory()
         {
             return db.Streets.Where(s => s.StreetNameRecordsStreets.Any());
@@ -256,6 +266,14 @@ namespace AdressAccounting.Services
                 StreetNameRecords = record
             };
             db.StreetNameRecordsStreets.Add(snrs);
+            db.SaveChanges();
+        }
+
+        public void RedactStreet(Street newStreet)
+        {
+            var oldStreet = db.Streets.Find(newStreet.Id);
+            if (oldStreet == null) return;
+            oldStreet.Name = newStreet.Name;
             db.SaveChanges();
         }
     }

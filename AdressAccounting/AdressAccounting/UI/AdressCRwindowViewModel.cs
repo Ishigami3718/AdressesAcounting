@@ -22,7 +22,7 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedDateFrom = value;
-                IsDateFromValid = _selectedDateFrom.HasValue;
+                IsDateFromValid = _selectedDateFrom.HasValue && _selectedDateFrom.Value <= DateTime.Now;
                 OnPropertyChanged(nameof(SelectedDateFrom));
             }
         }
@@ -102,9 +102,20 @@ namespace AdressAccounting.UI
             Streets = new ObservableCollection<Street>(_streetService.GetAllStreets());
         }
 
+        private int _areaId;
+        public AdressCRwindowViewModel(AdressService service, StreetService streetService, Adress adress)
+        {
+            _adressService = service;
+            _streetService = streetService;
+            _validator = new(_adressService);
+            Streets = new ObservableCollection<Street>(_streetService.GetAllStreets());
+            _areaId = adress.AreaId.Value;
+        }
+
         public async Task<bool> CreateAdress()
         {
             ResetValidation();
+            IsDateFromValid = SelectedDateFrom.HasValue;
             Adress newAdress = new Adress
             {
                 Street = SelectedStreet ?? null,
@@ -116,6 +127,19 @@ namespace AdressAccounting.UI
                 Number = string.IsNullOrEmpty(this.Number) ? 0 : 
                 int.TryParse(this.Number, out var number) ? number : 0
             };
+            if (_areaId != 0)
+            {
+                newAdress.AreaId = _areaId;
+                newAdress.IsActual = false;
+            }
+            else 
+            {
+                newAdress.Area = new AreaBuilding();
+                foreach (var record in newAdress.AdressRecords)
+                {
+                    record.Area = newAdress.Area;
+                }
+            }
             var validationResult = await _validator.ValidateAsync(newAdress);
             if (validationResult.IsValid && IsDateFromValid)
             {

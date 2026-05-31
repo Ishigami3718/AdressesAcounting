@@ -7,17 +7,16 @@ namespace AdressAccounting.Validators
 {
     public class AdressRecordsValidator:AbstractValidator<AdressRecord>
     {
-        private readonly AdressAccountingContext _db;
-        public AdressRecordsValidator(AdressAccountingContext db)
+        public AdressRecordsValidator()
         {
-            _db = db;
             RuleFor(x => x.DateFrom)
                 .NotEmpty().WithMessage("Дата початку не може бути порожньою")
-                .LessThanOrEqualTo(x => x.DateTo)
+                .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now))
+                /*.LessThanOrEqualTo(x => x.DateTo)
                 .WithMessage("Дата початку повинна бути раніше дати закінчення")
                 /*.MustAsync(BeHigherThenLast)
                 .WithMessage("Дата початку повинна бути пізніше останньої дати")*/;
-            RuleFor(x => x.DateTo)
+            /*RuleFor(x => x.DateTo)
                 .NotEmpty().WithMessage("Дата закінчення не може бути порожньою")
                 .GreaterThanOrEqualTo(x => x.DateFrom)
                 .WithMessage("Дата закінчення повинна бути після дати початку")

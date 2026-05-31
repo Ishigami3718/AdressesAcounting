@@ -71,7 +71,7 @@ namespace AdressAccounting.Services
                 query = query.Where(a => a.Number == number);
             }
 
-            if (selectedStreet != null)
+            if (selectedStreet != null && selectedStreet.Id != 0)
             {
                 query = query.Where(a => a.StreetId == selectedStreet.Id);
             }
@@ -149,5 +149,6 @@ namespace AdressAccounting.Services
             _db.Adresses.Remove(existingAdress);
             _db.SaveChanges();
         }
+
     }
 }

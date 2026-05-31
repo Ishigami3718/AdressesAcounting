@@ -22,15 +22,15 @@
               CanUserAddRows="False" CanUserDeleteRows="False"
               CanUserResizeRows="False" CanUserReorderColumns="False"
               IsReadOnly="True" SelectionMode="Single"
-              Margin="5" ItemsSource="{Binding HistoricalNames}"
+              Margin="5" ItemsSource="{Binding StreetNameRecords}"
               SelectionUnit="FullRow" CanUserSortColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.1*"/>
                     <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.3*"/>
                     <DataGridTextColumn Header="Дата початку" Width="0.3*"
-                                        Binding="{Binding StartDate, StringFormat=0:{dd.MM.yyyy}}"/>
+                                        Binding="{Binding DateFrom, StringFormat={}{0:dd.MM.yyyy}}"/>
                     <DataGridTextColumn Header="Дата кінця" Width="0.3*"
-                                        Binding="{Binding EndDate, StringFormat=0:{dd.MM.yyyy}}"/>
+                                        Binding="{Binding DateTo, StringFormat={}{0:dd.MM.yyyy}}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
@@ -44,8 +44,6 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.1*"/>
                     <DataGridTextColumn Header="Назва вулиці" Binding="{Binding Name}" Width="0.5*"/>
-                    <DataGridTextColumn Header="Дата" Width="0.4*"
-                            Binding="{Binding StartDate, StringFormat=0:{dd.MM.yyyy}}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>
@@ -59,8 +57,6 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.1*"/>
                     <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.5*"/>
-                    <DataGridTextColumn Header="Дата початку" Width="0.4*"
-                            Binding="{Binding StartDate, StringFormat=0:{dd.MM.yyyy}}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>

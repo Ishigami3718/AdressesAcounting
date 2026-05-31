@@ -22,5 +22,11 @@ namespace AdressAccounting.Services
             return db.StreetNameRecords
                     .FromSqlRaw(sql, new Npgsql.NpgsqlParameter("streetId", street.Id));
         }
+
+        public void AddStreetNameRecordStreet(StreetNameRecordsStreet street)
+        {
+            db.StreetNameRecordsStreets.Add(street);
+            db.SaveChanges();
+        }
     }
 }

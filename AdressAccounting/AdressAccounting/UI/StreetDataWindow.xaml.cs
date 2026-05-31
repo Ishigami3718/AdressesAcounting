@@ -22,6 +22,7 @@ namespace AdressAccounting.UI
         public ObservableCollection<Street> ParentStreets { get; set; }
         public ObservableCollection<Street> ChildStreets { get; set; }
 
+
         public ObservableCollection<StreetNameRecord> StreetNameRecords { get; set; }
 
         private readonly StreetService _streetService;

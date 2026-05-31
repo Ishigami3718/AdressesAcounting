@@ -27,10 +27,11 @@ namespace AdressAccounting.UI
         {
             _streetService = streetService;
             _streetNameHistoryService = streetNameHistoryService;
-            _viewModel = new StreetFrameViewModel(_streetService);
+            _viewModel = new StreetFrameViewModel(_streetService, _streetNameHistoryService);
             InitializeComponent();
             this.DataContext = _viewModel;
         }
+
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
@@ -39,7 +40,8 @@ namespace AdressAccounting.UI
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            _viewModel.AddStreet();
+
 
         }
 
@@ -55,7 +57,7 @@ namespace AdressAccounting.UI
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-
+            _viewModel.EditStreet(_viewModel.SelectedStreet);
         }
 
         private void AdressDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
