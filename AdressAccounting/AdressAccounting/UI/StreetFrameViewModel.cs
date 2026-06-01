@@ -19,7 +19,6 @@ namespace AdressAccounting.UI
         private bool _isSortedByNameFilter;
         private DateTime? _selectedDateFromFilter;
         private DateTime? _selectedDateToFilter;
-        private bool _isStreetSelected;
         private string _nameSearchStreetFilter;
         private string _countOfStreets;
         private bool _isActualFilter;
@@ -63,6 +62,11 @@ namespace AdressAccounting.UI
             set
             {
                 _isHasHistoryFilter = value;
+                if (!_isActualFilter)
+                {
+                    SelectedDateFromFilter = null;
+                    SelectedDateToFilter = null;
+                }
                 LoadStreets();
                 OnPropertyChanged(nameof(IsHasHistoryFilter));
             }
@@ -79,15 +83,7 @@ namespace AdressAccounting.UI
             }
         }
 
-        public bool IsStreetSelected
-        {
-            get { return _isStreetSelected; }
-            set
-            {
-                _isStreetSelected = value;
-                OnPropertyChanged(nameof(IsStreetSelected));
-            }
-        }
+        public bool IsStreetSelected => SelectedStreet != null;
 
         public string CountOfStreets
         {

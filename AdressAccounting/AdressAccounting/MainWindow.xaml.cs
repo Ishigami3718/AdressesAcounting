@@ -71,6 +71,10 @@ namespace AdressAccounting
             MainFrame.Navigate(new UI.StreetFrame(_streetService, _streetNameHistoryService));
         }
 
-        
+        private void MenuItemMerging_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new UI.MergeFrame(_mergeService, _streetService));
+        }
+
     }
 }

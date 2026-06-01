@@ -27,6 +27,7 @@ namespace AdressAccounting.Services
                 {
                     Street = newStreet
                 });
+                //TODO додати записи історії для утворених вулиць із старої вулиці
                 _db.Streets.Add(newStreet);
             }
             _db.SplitRecords.Add(splitRecord);

@@ -11,7 +11,7 @@
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="Адреси" Tag="UI/AdressFrame.xaml" Click="MenuItemAdresses_Click"/>
                 <MenuItem Header="Вулиці" Tag="UI/StreetFrame.xaml" Click="MenuItemStreets_Click"/>
-                <MenuItem Header="Злиття вулиць" Tag="UI/MergeFrame.xaml"/>
+                <MenuItem Header="Злиття вулиць" Tag="UI/MergeFrame.xaml" Click="MenuItemMerging_Click"/>
                 <MenuItem Header="Розщеплення вулиць" Tag="UI/SplitFrame.xaml"/>
             </Menu>
             <Frame Name="MainFrame" NavigationUIVisibility="Hidden" />

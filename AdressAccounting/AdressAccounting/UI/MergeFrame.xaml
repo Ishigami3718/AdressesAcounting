@@ -1,0 +1,87 @@
+﻿<Page x:Class="AdressAccounting.UI.MergeFrame"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:AdressAccounting.UI"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="MergeFrame">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="0.7*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+            <CheckBox Content="Історичний запис" Margin="5" IsChecked="{Binding IsHistorical}"/>
+            <TextBlock Text="Назва вулиці, що утвориться" Margin="5"/>
+            <TextBox Margin="5" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="Вулиця результат злиття" Margin="5"/>
+            <ComboBox Margin="5" ItemsSource="{Binding Streets}" 
+                      SelectedItem="{Binding SelectedStreet, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="Додати вулицю для злиття" Margin="5"/>
+            <Button Content="Злити вулиці" Margin="5"/>
+        </StackPanel>
+
+        <GroupBox Header="Вулиці доступні до злиття" Grid.Row="0" Grid.Column="1">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            <DataGrid AutoGenerateColumns="False" 
+              CanUserAddRows="False" CanUserDeleteRows="False"
+              CanUserResizeRows="False" CanUserReorderColumns="False"
+              IsReadOnly="True" SelectionMode="Single"
+              Margin="5" ItemsSource="{Binding Streets}"
+              SelectionUnit="FullRow" CanUserSortColumns="False"
+              SelectedItem="{Binding SelectedStreetFromAll, UpdateSourceTrigger=PropertyChanged}"
+              MouseDoubleClick="Streets_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}"/>
+                </DataGrid.Columns>
+
+
+            </DataGrid>
+        </GroupBox>
+        <GroupBox Header="Вулиці для злиття" Grid.Column="1">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                    <Setter Property="Grid.Row" Value="1"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                            <Setter Property="Grid.Row" Value="0"/>
+                            <Setter Property="Grid.RowSpan" Value="2"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            <DataGrid AutoGenerateColumns="False" 
+              CanUserAddRows="False" CanUserDeleteRows="False"
+              CanUserResizeRows="False" CanUserReorderColumns="False"
+              IsReadOnly="True" SelectionMode="Single"
+              Margin="5" ItemsSource="{Binding SelectedStreets}"
+              SelectionUnit="FullRow" CanUserSortColumns="False"
+              SelectedItem="{Binding SelectedStreetFromMerging, UpdateSourceTrigger=PropertyChanged}"
+              MouseDoubleClick="DataGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}"/>
+                </DataGrid.Columns>
+
+
+
+            </DataGrid>
+        </GroupBox>
+    </Grid>
+</Page>
