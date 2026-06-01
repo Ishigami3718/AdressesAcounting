@@ -28,6 +28,7 @@ namespace AdressAccounting.Services
                 }).ToList()
             };
             _db.MergeRecords.Add(mergeRecord);
+            //foreach in oldstreets adresses and update them with method
             _db.SaveChanges();
         }
 

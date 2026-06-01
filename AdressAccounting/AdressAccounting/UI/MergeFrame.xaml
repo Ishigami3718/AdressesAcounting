@@ -10,8 +10,8 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*" />
-            <ColumnDefinition Width="0.7*" />
+            <ColumnDefinition Width="0.2*" />
+            <ColumnDefinition Width="0.8*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -19,12 +19,87 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
             <CheckBox Content="Історичний запис" Margin="5" IsChecked="{Binding IsHistorical}"/>
-            <TextBlock Text="Назва вулиці, що утвориться" Margin="5"/>
-            <TextBox Margin="5" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="Вулиця результат злиття" Margin="5"/>
-            <ComboBox Margin="5" ItemsSource="{Binding Streets}" 
+            <CheckBox Margin="5" IsChecked="{Binding IsAutomaticalRenumeration}">
+                <CheckBox.Content>
+                    <TextBlock Text="Автоматична перенумерація адрес" TextWrapping="Wrap"/>
+                </CheckBox.Content>
+            </CheckBox>
+            <Grid>
+                <Grid.Style>
+                    <Style
+            TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Пошук" Margin="5" TextWrapping="Wrap"/>
+
+                <TextBox Margin="5" Grid.Row="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style
+                        TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Назва вулиці, що утвориться" Margin="5" TextWrapping="Wrap"/>
+
+                <TextBox Margin="5" Grid.Row="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style
+        TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Вулиця результат злиття" Margin="5" TextWrapping="Wrap"/>
+            <ComboBox Margin="5" Grid.Row="1" ItemsSource="{Binding Streets}" DisplayMemberPath="Name"
                       SelectedItem="{Binding SelectedStreet, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="Додати вулицю для злиття" Margin="5"/>
+                <Button Grid.Row="2"  Margin="5" >
+                    <Button.Content>
+                        <TextBlock Text="Додати вулицю для злиття" TextWrapping="Wrap"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            <Button Content="Записати нові адреси" Margin="5" Click="Button_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="False">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
             <Button Content="Злити вулиці" Margin="5"/>
         </StackPanel>
 
@@ -47,8 +122,8 @@
               SelectedItem="{Binding SelectedStreetFromAll, UpdateSourceTrigger=PropertyChanged}"
               MouseDoubleClick="Streets_MouseDoubleClick">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="0.2*"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.8*"/>
                 </DataGrid.Columns>
 
 
@@ -75,8 +150,8 @@
               SelectedItem="{Binding SelectedStreetFromMerging, UpdateSourceTrigger=PropertyChanged}"
               MouseDoubleClick="DataGrid_MouseDoubleClick">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="0.2*"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.8*"/>
                 </DataGrid.Columns>
 
 

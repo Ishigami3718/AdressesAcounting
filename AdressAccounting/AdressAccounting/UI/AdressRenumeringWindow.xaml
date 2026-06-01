@@ -1,0 +1,48 @@
+﻿<Window x:Class="AdressAccounting.UI.AdressRenumeringWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdressAccounting.UI"
+        mc:Ignorable="d"
+        Title="AdressRenumeringWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.85*"/>
+            <ColumnDefinition Width="0.15*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.9*" />
+            <RowDefinition Height="0.1*" />
+        </Grid.RowDefinitions>
+        <DataGrid  Height="400" AutoGenerateColumns="False" 
+  CanUserAddRows="False" CanUserDeleteRows="False"
+  CanUserResizeRows="False" CanUserReorderColumns="False"
+  SelectionMode="Single"
+  Margin="5" ItemsSource="{Binding Adresses}"
+  SelectionUnit="FullRow" CanUserSortColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" IsReadOnly="True" Binding="{Binding Id}" Width="0.2*"/>
+                <DataGridTextColumn Header="Поточна вулиця" IsReadOnly="True" Binding="{Binding Street.Name}" Width="0.8*"/>
+                <DataGridTextColumn Header="Поточний номер" IsReadOnly="True" Binding="{Binding Number}" Width="0.8*"/>
+            </DataGrid.Columns>
+
+
+        </DataGrid>
+
+        <DataGrid Grid.Column="1" Height="400" AutoGenerateColumns="False" 
+CanUserAddRows="False" CanUserDeleteRows="False"
+CanUserResizeRows="False" CanUserReorderColumns="False"
+SelectionMode="Single"
+Margin="5" ItemsSource="{Binding NewNumbers_}"
+SelectionUnit="FullRow" CanUserSortColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Новий номер" IsReadOnly="False" Binding="{Binding Number}" Width="0.8*"/>
+            </DataGrid.Columns>
+
+
+        </DataGrid>
+
+        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center"  Content="Ok" Margin="5" Click="Button_Click" Width="49"/>
+    </Grid>
+</Window>

@@ -17,6 +17,9 @@ namespace AdressAccounting.UI
         private Street _selectedStreetResult;
         private Street _selectedStreetFromAll;
         private Street _selectedStreetFromMerging;
+        private bool _isAutomaticRenumeration;
+        private int[] newNumbers;
+        private string _newName;
 
         public ObservableCollection<Street> Streets
         {
@@ -51,6 +54,7 @@ namespace AdressAccounting.UI
                     .Where(s => !s.SplitResults.Any() && !s.MergeRecords.Any()));
                     SelectedStreets = new();
                 }
+                UpdateStreets();
                 OnPropertyChanged(nameof(IsHistorical));
             }
         }
@@ -61,6 +65,7 @@ namespace AdressAccounting.UI
             set
             {
                 _name = value;
+                UpdateStreets();
                 OnPropertyChanged(nameof(Name));
             }
 
@@ -96,6 +101,26 @@ namespace AdressAccounting.UI
             }
         }
 
+        public bool IsAutomaticRenumeration
+        {
+            get => _isAutomaticRenumeration;
+            set
+            {
+                _isAutomaticRenumeration = value;
+                OnPropertyChanged(nameof(IsAutomaticRenumeration));
+            }
+        }
+
+        public string NewName
+        {
+            get => _newName;
+            set
+            {
+                _newName = value;
+                OnPropertyChanged(nameof(NewName));
+            }
+        }
+
 
         private readonly StreetService _streetService;
         private readonly StreetValidator _streetValidator;
@@ -105,8 +130,8 @@ namespace AdressAccounting.UI
             _streetService = service;
             _streetValidator = new();
             _mergeService = mergeService;
-            Streets = new(_streetService.FilterByIsActual()
-                    .Where(s => !s.SplitResults.Any() && !s.MergeRecords.Any()));
+            IsAutomaticRenumeration = true;
+            UpdateStreets();
         }
 
         public void SwapStreetDirect(Street street)
@@ -121,6 +146,20 @@ namespace AdressAccounting.UI
             SelectedStreets.Remove(street);
         }
 
+        private void UpdateStreets()
+        {
+            Streets = new(_streetService.FilterByIsActual()
+                    .Where(s => !s.SplitResults.Any() && !s.MergeRecords.Any()).OrderBy(s => s.Name));
+            if (!string.IsNullOrEmpty(Name)) Streets = 
+                    new ObservableCollection<Street>(Streets.Where(s => s.Name.ToLower().Contains(Name.ToLower())));
+        }
+
+        public void GetNewNumbers()
+        {
+            AdressRenumeringWindow window = new AdressRenumeringWindow(SelectedStreets);
+            window.ShowDialog();
+            newNumbers = window.NewNumbersInt;
+        }
 
 
         public event PropertyChangedEventHandler? PropertyChanged;

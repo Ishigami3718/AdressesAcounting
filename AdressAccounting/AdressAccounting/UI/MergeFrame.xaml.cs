@@ -42,5 +42,10 @@ namespace AdressAccounting.UI
             if (_viewModel.SelectedStreetFromMerging != null)
                 _viewModel.SwapStreetReverse(_viewModel.SelectedStreetFromMerging);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.GetNewNumbers();
+        }
     }
 }
