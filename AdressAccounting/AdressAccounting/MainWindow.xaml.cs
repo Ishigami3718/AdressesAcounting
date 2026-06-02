@@ -76,5 +76,9 @@ namespace AdressAccounting
             MainFrame.Navigate(new UI.MergeFrame(_mergeService, _streetService));
         }
 
+        private void MenuItemSpliting_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new UI.SplitFrame(_splitService, _streetService));
+        }
     }
 }

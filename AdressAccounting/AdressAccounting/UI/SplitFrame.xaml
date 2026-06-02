@@ -9,6 +9,158 @@
       Title="SplitFrame">
 
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*" />
+            <ColumnDefinition Width="0.8*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+            <CheckBox Content="Історичний запис" Margin="5" IsChecked="{Binding IsHistorical}"/>
+            <CheckBox Margin="5" IsChecked="{Binding IsAutomaticRenumeration}">
+                <CheckBox.Content>
+                    <TextBlock Text="Автоматична перенумерація адрес" TextWrapping="Wrap"/>
+                </CheckBox.Content>
+            </CheckBox>
+            <Grid>
+                <Grid.Style>
+                    <Style
+    TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Назва вулиці, що утвориться" Margin="5" TextWrapping="Wrap"/>
+
+                <TextBox Margin="5" Grid.Row="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style
+                TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Пошук" Margin="5" TextWrapping="Wrap"/>
+
+                <TextBox Margin="5" Grid.Row="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style
+TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Вулиця для розділення" Margin="5" TextWrapping="Wrap"/>
+                <ComboBox Margin="5" Grid.Row="1" ItemsSource="{Binding Streets}" DisplayMemberPath="Name"
+              SelectedItem="{Binding SelectedStreetResult, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button Grid.Row="2"  Margin="5" >
+                    <Button.Content>
+                        <TextBlock Text="Додати вулицю яка утвориться" TextWrapping="Wrap"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            <Button Content="Записати нові адреси" Margin="5" Click="Button_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsAutomaticRenumeration}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Content="Розділити вулиці" Margin="5"/>
+        </StackPanel>
+
+        <GroupBox Header="Вулиці доступні до злиття" Grid.Row="0" Grid.Column="1">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            <DataGrid AutoGenerateColumns="False" 
+      CanUserAddRows="False" CanUserDeleteRows="False"
+      CanUserResizeRows="False" CanUserReorderColumns="False"
+      IsReadOnly="True" SelectionMode="Single"
+      Margin="5" ItemsSource="{Binding Streets}"
+      SelectionUnit="FullRow" CanUserSortColumns="False"
+      SelectedItem="{Binding SelectedStreetFromAll, UpdateSourceTrigger=PropertyChanged}"
+      MouseDoubleClick="Streets_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="0.2*"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.8*"/>
+                </DataGrid.Columns>
+
+
+            </DataGrid>
+        </GroupBox>
+        <GroupBox Header="Вулиці для злиття" Grid.Column="1">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox">
+                    <Setter Property="Grid.Row" Value="0"/>
+                    <Setter Property="Grid.RowSpan" Value="2"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsHistorical}" Value="True">
+                            <Setter Property="Grid.Row" Value="1"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            <DataGrid AutoGenerateColumns="False" 
+      CanUserAddRows="False" CanUserDeleteRows="False"
+      CanUserResizeRows="False" CanUserReorderColumns="False"
+      IsReadOnly="True" SelectionMode="Single"
+      Margin="5" ItemsSource="{Binding SelectedStreets}"
+      SelectionUnit="FullRow" CanUserSortColumns="False"
+      SelectedItem="{Binding SelectedStreetFromMerging, UpdateSourceTrigger=PropertyChanged}"
+      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="0.2*"/>
+                    <DataGridTextColumn Header="Назва" Binding="{Binding Name}" Width="0.8*"/>
+                </DataGrid.Columns>
+
+
+
+            </DataGrid>
+        </GroupBox>
     </Grid>
 </Page>

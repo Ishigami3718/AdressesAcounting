@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AdressAccounting.UI
 {
-    public class MergeFrameViewModel : INotifyPropertyChanged
+    public class SplitFrameViewModel: INotifyPropertyChanged
     {
         private ObservableCollection<Street> _streets;
         private ObservableCollection<Street> _selectedStreets = new();
@@ -18,7 +18,7 @@ namespace AdressAccounting.UI
         private Street _selectedStreetFromAll;
         private Street _selectedStreetFromMerging;
         private bool _isAutomaticRenumeration;
-        private int[] newNumbers;
+        private List<(Street, int)> newStreetsNumbers;
         private string _newName;
 
         public ObservableCollection<Street> Streets
@@ -124,12 +124,12 @@ namespace AdressAccounting.UI
 
         private readonly StreetService _streetService;
         private readonly StreetValidator _streetValidator;
-        private readonly MergeService _mergeService;
-        public MergeFrameViewModel(MergeService mergeService, StreetService service)
+        private readonly SplitService _splitService;
+        public SplitFrameViewModel(SplitService splitService, StreetService service)
         {
             _streetService = service;
             _streetValidator = new();
-            _mergeService = mergeService;
+            _splitService = splitService;
             UpdateStreets();
         }
 
@@ -149,15 +149,20 @@ namespace AdressAccounting.UI
         {
             Streets = new(_streetService.FilterByIsActual()
                     .Where(s => !s.SplitResults.Any() && !s.MergeRecords.Any()).OrderBy(s => s.Name));
-            if (!string.IsNullOrEmpty(Name)) Streets = 
+            if (!string.IsNullOrEmpty(Name)) Streets =
                     new ObservableCollection<Street>(Streets.Where(s => s.Name.ToLower().Contains(Name.ToLower())));
         }
 
         public void GetNewNumbers()
         {
-            AdressRenumeringWindow window = new AdressRenumeringWindow(SelectedStreets);
-            window.ShowDialog();
-            newNumbers = window.NewNumbersInt;
+            try
+            {
+                AdressRenumeringWindow window = new AdressRenumeringWindow(SelectedStreetResult, SelectedStreets);
+                window.ShowDialog();
+                newStreetsNumbers = Enumerable.Range(0, SelectedStreets.Count)
+                    .Select(i => (window.NewNumbers_[i].Street, window.NewNumbers_[i].Number)).ToList();
+            }
+            catch (Exception ex) { }
         }
 
 

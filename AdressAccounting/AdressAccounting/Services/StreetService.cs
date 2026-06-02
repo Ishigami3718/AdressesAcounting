@@ -246,9 +246,6 @@ namespace AdressAccounting.Services
 
         public void UpdateStreetName(Street street, string newName, DateOnly date)
         {
-            //TODO: Спитати у Іллі Миколайовича, чи потрібно додавати запис про зміну назви в історію,
-            //якщо назва не змінилася і чи треба дата створення вулиці у філдах вулиці
-            //спитати про 28 запитів з методички
 
             //TODO: make checking if already exists record 
             string name = street.Name;  

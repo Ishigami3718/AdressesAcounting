@@ -15,7 +15,7 @@ namespace AdressAccounting.Services
 
         //Після спліта чи мерджа треба просто робити адреми неактуальнимиі юзер вручну оновлює, чи автоматично
         // якось зробити щоб юзер у вьюшці злиття мерджа обирав те як адреси оновляться
-        public void MergeStreets(List<Street> oldStreets, Street newStreet, DateOnly date)
+        public void MergeStreets(List<Street> oldStreets, Street newStreet, DateOnly date, int[] newNumbers = null)
         {
             //TODO: add bool isActive updating when it will be added to the model
             var mergeRecord = new MergeRecord

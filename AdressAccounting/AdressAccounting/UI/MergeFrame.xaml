@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
             <CheckBox Content="Історичний запис" Margin="5" IsChecked="{Binding IsHistorical}"/>
-            <CheckBox Margin="5" IsChecked="{Binding IsAutomaticalRenumeration}">
+            <CheckBox Margin="5" IsChecked="{Binding IsAutomaticRenumeration}">
                 <CheckBox.Content>
                     <TextBlock Text="Автоматична перенумерація адрес" TextWrapping="Wrap"/>
                 </CheckBox.Content>
@@ -39,7 +39,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="Пошук" Margin="5" TextWrapping="Wrap"/>
+                <TextBlock Text="Назва вулиці, що утвориться" Margin="5" TextWrapping="Wrap"/>
 
                 <TextBox Margin="5" Grid.Row="1" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
@@ -58,7 +58,7 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="Назва вулиці, що утвориться" Margin="5" TextWrapping="Wrap"/>
+                <TextBlock Text="Пошук" Margin="5" TextWrapping="Wrap"/>
 
                 <TextBox Margin="5" Grid.Row="1" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
@@ -91,10 +91,10 @@
             <Button Content="Записати нові адреси" Margin="5" Click="Button_Click">
                 <Button.Style>
                     <Style TargetType="Button">
-                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Setter Property="Visibility" Value="Visible"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsHistorical}" Value="False">
-                                <Setter Property="Visibility" Value="Visible"/>
+                            <DataTrigger Binding="{Binding IsAutomaticRenumeration}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
