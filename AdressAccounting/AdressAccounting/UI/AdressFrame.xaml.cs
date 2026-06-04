@@ -36,7 +36,13 @@ namespace AdressAccounting.UI
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.DeleteAdress(_viewModel.SelectedAdress);
+            var result = MessageBox.Show("Видалення призведе до повної втрати даних, " +
+                "рекомендується видаляти лише, якщо створено абсолютно неправильний об'єкт без можливості відредагування", 
+                "Підтвердження видалення", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (result == MessageBoxResult.Yes)
+            {
+                _viewModel.DeleteAdress(_viewModel.SelectedAdress);
+            }
         }
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -47,12 +53,12 @@ namespace AdressAccounting.UI
 
         private void HistoryAddButton_Click(object sender, RoutedEventArgs e)
         {
-
+            _viewModel.AddHistory(_viewModel.SelectedAdress);
         }
 
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-
+            await _viewModel.UpdateAdress();
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -63,7 +69,7 @@ namespace AdressAccounting.UI
         private void AdressDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var adressRecords = _adressService.GetAdressHistory(_viewModel.SelectedAdress);
-            if (adressRecords.Count() < 1) 
+            if (adressRecords.Count() <= 1) 
             { 
                 MessageBox.Show("У адреси немає історичних записів"); 
                 return; 

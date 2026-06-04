@@ -10,14 +10,14 @@
         <DataGrid Name="AdressDataGrid" AutoGenerateColumns="False" 
           CanUserAddRows="False" CanUserDeleteRows="False"
           CanUserResizeRows="False" CanUserReorderColumns="False"
-          IsReadOnly="True" IsHitTestVisible="False"
-          Margin="5" ItemsSource="{Binding AdressRecords}" CanUserSortColumns="False">
+          IsReadOnly="True" 
+          Margin="5" ItemsSource="{Binding AdressRecords}" CanUserSortColumns="False" >
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" IsReadOnly="True"
                             CanUserReorder="False" CanUserResize="False" Width="0.2*"/>
-                <DataGridTextColumn Header="Адреса" Binding="{Binding Adress.Number}" IsReadOnly="True"
+                <DataGridTextColumn Header="Адреса" Binding="{Binding Number}" IsReadOnly="True"
                             CanUserReorder="False" CanUserResize="False" Width="0.3*"/>
-                <DataGridTextColumn Header="Вулиця" Binding="{Binding Adress.Street.Name}" IsReadOnly="True"
+                <DataGridTextColumn Header="Вулиця" Binding="{Binding StreetName}" IsReadOnly="True"
                             CanUserReorder="False" CanUserResize="False" Width="0.5*"/>
                 <DataGridTextColumn Header="Від" Binding="{Binding DateFrom, StringFormat={}{0:dd.MM.yyyy}}" IsReadOnly="True"
             CanUserReorder="False" CanUserResize="False" Width="0.5*"/>

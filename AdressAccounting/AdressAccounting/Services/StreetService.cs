@@ -12,15 +12,27 @@ namespace AdressAccounting.Services
             db = context;
         }
 
-        private void AddStreet(Street street)
-        {
-            db.Streets.Add(street);
-            db.SaveChanges();
-        }
 
-        public void CreateStreet(string name)
+        public void CreateStreet(string name, DateTime? dateFromCreating)
         {
-            AddStreet(new Street { Name = name, IsActual = true });
+            if(db.Streets.FirstOrDefault(s => s.Name.ToLower().Trim() == name.ToLower().Trim()) != null)
+            {
+                throw new Exception("Street with this name already exists");
+            }
+            StreetNameRecord record = new StreetNameRecord()
+            {
+                DateFrom =
+                dateFromCreating.HasValue ? DateOnly.FromDateTime(dateFromCreating.Value) : (DateOnly?)null,
+                Name = name
+            };
+            Street street = new Street { Name = name, IsActual = true };
+            StreetNameRecordsStreet snrs = new StreetNameRecordsStreet()
+            {
+                Street = street,
+                StreetNameRecords = record
+            };
+            db.StreetNameRecordsStreets.Add(snrs);
+            db.SaveChanges();
         }
 
         
@@ -48,7 +60,7 @@ namespace AdressAccounting.Services
             }
             if (hasHistory)
             {
-                query = query.Where(s => s.StreetNameRecordsStreets.Any());
+                query = query.Where(s => s.StreetNameRecordsStreets.Count() > 1);
             }
             if(isSortedByName)
             {

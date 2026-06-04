@@ -47,5 +47,10 @@ namespace AdressAccounting.UI
         {
             _viewModel.GetNewNumbers();
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            _viewModel.MergeStreets();
+        }
     }
 }

@@ -16,8 +16,9 @@ namespace AdressAccounting.UI
         private readonly StreetService _streetService;
         private readonly StreetNameHistoryService _streetNameHistoryService;
         private string _streetName;
-        private bool _isActual = true;
+        private bool _isActual;
         private Street _selectedRelatedStreet;
+        private DateTime? _dateFromCreating;
         private DateTime? _dateFrom;
         private DateTime? _dateTo;
 
@@ -62,6 +63,15 @@ namespace AdressAccounting.UI
             }
         }
 
+        public DateTime? DateFromCreating
+        {
+            get => _dateFromCreating;
+            set
+            {
+                    _dateFromCreating = value;
+                    OnPropertyChanged(nameof(DateFromCreating));
+            }
+        }
         public DateTime? DateFrom
         {
             get => _dateFrom;
@@ -85,6 +95,18 @@ namespace AdressAccounting.UI
             }
         }
 
+        private bool _isDateFromCreatingValid;
+
+        public bool IsDateFromCreatingValid
+        {
+            get => _isDateFromCreatingValid;
+            set
+            {
+                _isDateFromCreatingValid = value;
+                OnPropertyChanged(nameof(IsDateFromCreatingValid));
+            }
+        }
+
         public StreetCRWindowViewModel(StreetService streetService, StreetNameHistoryService streetNameHistoryService)
         {
 
@@ -93,6 +115,7 @@ namespace AdressAccounting.UI
             _validator = new StreetValidator();
             _streetNameRecordsValidator = new StreetNameRecordsValidator();
             Streets = new ObservableCollection<Street>(_streetService.FilterByIsActual());
+            IsActual = true;
         }
 
         private int _idRedact;
@@ -124,7 +147,7 @@ namespace AdressAccounting.UI
                 {
 
                     if (!isRedact)
-                        _streetService.CreateStreet(StreetName);
+                        _streetService.CreateStreet(StreetName, DateFromCreating);
                     else
                         _streetService.RedactStreet(street);
                     result = true;

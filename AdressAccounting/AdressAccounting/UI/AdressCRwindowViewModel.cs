@@ -16,6 +16,7 @@ namespace AdressAccounting.UI
         public bool IsActual { get; set; }
 
         private DateTime? _selectedDateFrom;
+        private DateTime? _selectedDateTo;
         public DateTime? SelectedDateFrom
         {
             get => _selectedDateFrom;
@@ -24,6 +25,16 @@ namespace AdressAccounting.UI
                 _selectedDateFrom = value;
                 IsDateFromValid = _selectedDateFrom.HasValue && _selectedDateFrom.Value <= DateTime.Now;
                 OnPropertyChanged(nameof(SelectedDateFrom));
+            }
+        }
+
+        public DateTime? SelectedDateTo
+        {
+            get => _selectedDateTo;
+            set
+            {
+                _selectedDateTo = value;
+                OnPropertyChanged(nameof(SelectedDateTo));
             }
         }
 
@@ -103,13 +114,27 @@ namespace AdressAccounting.UI
         }
 
         private int _areaId;
-        public AdressCRwindowViewModel(AdressService service, StreetService streetService, Adress adress)
+        private bool _isHistoryMode;
+        private AdressRecordsValidator _adressRecordValidator;
+        public AdressCRwindowViewModel(AdressService service, StreetService streetService, Adress adress,
+            bool isHistoryMode = false)
         {
             _adressService = service;
             _streetService = streetService;
             _validator = new(_adressService);
             Streets = new ObservableCollection<Street>(_streetService.GetAllStreets());
-            _areaId = adress.AreaId.Value;
+            if (isHistoryMode)
+            {
+                IsActual = false;
+                _isHistoryMode = isHistoryMode;
+                _adressRecordValidator = new();
+            }
+            else
+            {
+                SelectedStreet = adress.Street;
+                Number = adress.Number.ToString();
+                _areaId = adress.AreaId.Value;
+            }
         }
 
         public async Task<bool> CreateAdress()
@@ -123,9 +148,11 @@ namespace AdressAccounting.UI
                 IsActual = IsActual,
                 AdressRecords = new List<AdressRecord> { new AdressRecord
                 { DateFrom = SelectedDateFrom.HasValue ?
-                DateOnly.FromDateTime((DateTime)SelectedDateFrom) : (DateOnly?)null } },
+                DateOnly.FromDateTime((DateTime)SelectedDateFrom) : (DateOnly?)null, 
+                    StreetName = SelectedStreet.Name } },
                 Number = string.IsNullOrEmpty(this.Number) ? 0 : 
                 int.TryParse(this.Number, out var number) ? number : 0
+                
             };
             if (_areaId != 0)
             {
@@ -148,26 +175,94 @@ namespace AdressAccounting.UI
             }
             else
             {
-                foreach (var error in validationResult.Errors)
-                {
-                    System.Diagnostics.Debug.WriteLine(error.ErrorMessage);
-                    switch (error.PropertyName)
-                    {
-                        case nameof(Adress.Number):
-                            IsNumberValid = false;
-                            NumberValidationMessage = error.ErrorMessage;
-                            break;
-                            case nameof(Adress.Street):
-                            IsStreetValid = false;
-                            StreetValidationMessage = error.ErrorMessage;
-                            break;
-                    }
-                    
-                }
+                ShowValidation(validationResult);
                 return false;
             }
         }
 
+        public async Task<bool> UpdateAdress(Adress adress)
+        {
+            //Update validation
+            ResetValidation();
+            if (!int.TryParse(this.Number, out int parsedNumber))
+            {
+                parsedNumber = 0;
+            }
+            Adress adressToValidate = new Adress
+            {
+                Id = adress.Id,
+                StreetId = SelectedStreet?.Id ?? 0,
+                IsActual = IsActual,
+                Number = parsedNumber
+            };
+            var validationResult = await _validator.ValidateAsync(adressToValidate);
+            if (validationResult.IsValid)
+            {
+                _adressService.UpdateAdress(adress, parsedNumber, SelectedStreet);
+                return true;
+            }
+            else
+            {
+                ShowValidation(validationResult);
+                return false;
+            }
+        }
+
+        public async Task<bool> AddHistory(Adress adress)
+        {
+            ResetValidation();
+            if (!SelectedDateFrom.HasValue)
+            {
+                IsDateFromValid = false;
+                return false;
+            }
+            if (!int.TryParse(this.Number, out int parsedNumber))
+            {
+                parsedNumber = 0;
+            }
+            AdressRecord adressRecordToValidate = new AdressRecord
+            {
+                AdressId = adress.Id,
+                DateFrom = DateOnly.FromDateTime((DateTime)SelectedDateFrom),
+                DateTo = DateOnly.FromDateTime((DateTime)SelectedDateTo),
+                Number = parsedNumber,
+                StreetName = SelectedStreet.Name
+            };
+            bool isDateRangeValid =  SelectedDateFrom.Value <= SelectedDateTo.Value && 
+                SelectedDateTo.Value <= DateTime.Today 
+                && DateOnly.FromDateTime(SelectedDateTo.Value) < adress.AdressRecords.Max(r => r.DateFrom);
+            var validationResult = _adressRecordValidator.Validate(adressRecordToValidate);
+            if (validationResult.IsValid && isDateRangeValid)
+            {
+                _adressService.AddAdressRecord(adressRecordToValidate);
+                return true;
+            }
+            else
+            {
+                ShowValidation(validationResult);
+                return false;
+            }
+        }
+
+        private void ShowValidation(FluentValidation.Results.ValidationResult validationResult)
+        {
+            foreach (var error in validationResult.Errors)
+            {
+                System.Diagnostics.Debug.WriteLine(error.ErrorMessage);
+                switch (error.PropertyName)
+                {
+                    case nameof(Adress.Number):
+                        IsNumberValid = false;
+                        NumberValidationMessage = error.ErrorMessage;
+                        break;
+                    case nameof(Adress.Street):
+                        IsStreetValid = false;
+                        StreetValidationMessage = error.ErrorMessage;
+                        break;
+                }
+
+            }
+        }
         private void ResetValidation()
         {
             IsStreetValid = true;

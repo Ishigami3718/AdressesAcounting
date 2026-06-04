@@ -163,7 +163,7 @@ namespace AdressAccounting.UI
         private void LoadStreets()
         {
             var streets = _streetService.GetStreetByFilters(NameSearchStreetFilter, IsActualFilter,
-                IsHasMergeParentsFilter, IsHasSplitParentFilter, 
+                IsHasSplitParentFilter, IsHasMergeParentsFilter,
                 IsHasHistoryFilter,
                 IsSortedByNameFilter,
                 SelectedDateFromFilter.HasValue ?

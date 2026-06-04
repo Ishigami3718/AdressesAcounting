@@ -51,7 +51,8 @@ namespace AdressAccounting.Services
               */
         }
 
-        public IQueryable<Adress> GetFilteredAdresses(bool isActual, bool hasHistory, string numberFilter,
+        public async Task<List<Adress>> GetFilteredAdresses(bool isActual, bool hasHistory,
+            bool isHasRelatedAdressOnSameArea, string numberFilter,
             Street selectedStreet, DateOnly? historyFrom, DateOnly? historyTo)
         {
             IQueryable<Adress> query = _db.Adresses.Include(a => a.Street);
@@ -66,6 +67,10 @@ namespace AdressAccounting.Services
                 query = query.Where(a => a.AdressRecords.Count() > 1);
             }
 
+            if (isHasRelatedAdressOnSameArea)
+            {
+                query = query.Where(a => a.AreaId != null && _db.Adresses.Any(ar => ar.AreaId == a.AreaId && ar.Id != a.Id));
+            }
             if (!string.IsNullOrEmpty(numberFilter) && int.TryParse(numberFilter, out int number))
             {
                 query = query.Where(a => a.Number == number);
@@ -86,7 +91,7 @@ namespace AdressAccounting.Services
                 query = query.Where(a => a.AdressRecords.Any(r => r.DateTo <= historyTo.Value));
             }
 
-            return query;
+            return await query.ToListAsync();
         }
 
         public async Task<bool> BeUniqueNumberOnStreet(Adress address, int? number, CancellationToken cancellationToken)
@@ -104,13 +109,15 @@ namespace AdressAccounting.Services
             _db.SaveChanges();
         }
 
-        public void UpdateAdress(Adress adress, int newNumber)
+        public void UpdateAdress(Adress adress, int newNumber, Street newStreet)
         {
 
-            var existingAdress = _db.Adresses.Find(adress.Id);
+            var existingAdress = _db.Adresses
+        .Include(a => a.Street)
+        .FirstOrDefault(a => a.Id == adress.Id);
             if (existingAdress == null) throw new Exception("Adress not found");
             var adressRecord = _db.AdressRecords.Where(ar => ar.AdressId == adress.Id)
-                .OrderByDescending(ar => ar.Id)
+                .OrderBy(ar => ar.Id)
                 .LastOrDefault();
             if (adressRecord != null)
             {
@@ -120,15 +127,20 @@ namespace AdressAccounting.Services
 
 
             int oldNumber = existingAdress.Number ?? 0;
+            //int oldNumber = (int)_db.Entry(existingAdress).Property(a => a.Number).OriginalValue;
+            string oldStreetName = existingAdress.Street.Name;
             existingAdress.Number = newNumber;
+            existingAdress.StreetId = newStreet.Id;
             AdressRecord newRecord = new AdressRecord
             {
-                Number = newNumber,
+                AdressId = existingAdress.Id,
+                Number = oldNumber,
                 DateFrom = DateOnly.FromDateTime(DateTime.Now),
                 DateTo = null,
-                AreaId = existingAdress.AreaId
+                AreaId = existingAdress.AreaId,
+                StreetName = oldStreetName
             };
-            existingAdress.AdressRecords.Add(newRecord);
+            _db.AdressRecords.Add(newRecord);
             _db.SaveChanges();
         }
 
@@ -146,9 +158,17 @@ namespace AdressAccounting.Services
         {
             var existingAdress = _db.Adresses.Find(adress.Id);
             if (existingAdress == null) throw new Exception("Adress not found");
+            var relatedRecords = _db.AdressRecords.Where(ar => ar.AdressId == existingAdress.Id);
+            _db.AdressRecords.RemoveRange(relatedRecords);
             _db.Adresses.Remove(existingAdress);
             _db.SaveChanges();
         }
 
+        public void AddAdressRecord(AdressRecord record)
+        {
+            _db.AdressRecords.Add(record);
+            _db.SaveChanges();
+
+        }
     }
 }

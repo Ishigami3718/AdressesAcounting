@@ -16,6 +16,7 @@ namespace AdressAccounting.UI
         private readonly StreetService _streetService;
         private bool _isActualFilter;
         private bool _isHasHistoryFilter;
+        private bool _isHasRelatedAdressOnSameArea;
         private string _selectedAdressFilter;
         private Street _selectedStreetFilter;
         private DateTime? _selectedDateFromFilter;
@@ -40,7 +41,7 @@ namespace AdressAccounting.UI
             set
             {
                 _isActualFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 OnPropertyChanged(nameof(IsActualFilter));
             }
         }
@@ -51,8 +52,19 @@ namespace AdressAccounting.UI
             set
             {
                 _isHasHistoryFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 OnPropertyChanged(nameof(IsHasHistoryFilter));
+            }
+        }
+
+        public bool IsHasRelatedAdressOnSameArea
+        {
+            get => _isHasRelatedAdressOnSameArea;
+            set
+            {
+                _isHasRelatedAdressOnSameArea = value;
+                _ = LoadAdresses();
+                OnPropertyChanged(nameof(IsHasRelatedAdressOnSameArea));
             }
         }
 
@@ -62,7 +74,7 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedAdressFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 Debug.WriteLine($"SelectedAdressFilter set to: {_selectedAdressFilter}");
                 OnPropertyChanged(nameof(SelectedAdressFilter));
             }
@@ -74,7 +86,7 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedStreetFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 OnPropertyChanged(nameof(SelectedStreetFilter));
             }
         }
@@ -85,7 +97,7 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedDateFromFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 OnPropertyChanged(nameof(SelectedDateFromFilter));
             }
         }
@@ -96,7 +108,7 @@ namespace AdressAccounting.UI
             set
             {
                 _selectedDateToFilter = value;
-                LoadAdresses();
+                _ = LoadAdresses();
                 OnPropertyChanged(nameof(SelectedDateToFilter));
             }
         }
@@ -127,13 +139,13 @@ namespace AdressAccounting.UI
             _adressService = adressService;
             _streetService = streetService;
             LoadStreets();
-            LoadAdresses();
+            _ = LoadAdresses();
         }
 
-        private void LoadAdresses()
+        private async Task LoadAdresses()
         {
-            var adresses = _adressService.GetFilteredAdresses(IsActualFilter, 
-                IsHasHistoryFilter, SelectedAdressFilter, SelectedStreetFilter, 
+            var adresses = await _adressService.GetFilteredAdresses(IsActualFilter, 
+                IsHasHistoryFilter, IsHasRelatedAdressOnSameArea, SelectedAdressFilter, SelectedStreetFilter, 
                 SelectedDateFromFilter.HasValue 
                 ? DateOnly.FromDateTime((DateTime)SelectedDateFromFilter) : (DateOnly?)null, 
                 SelectedDateToFilter.HasValue 
@@ -150,34 +162,42 @@ namespace AdressAccounting.UI
             Streets = new ObservableCollection<Street>(streets);
         }
 
-        public void AddAdress()
+        public async Task AddAdress()
         {
             new AdressCRWindow(_adressService, _streetService).ShowDialog();
-            LoadAdresses();
+            await LoadAdresses();
         }
 
-        public void AddAdressOnSameArea()
+        public async Task AddAdressOnSameArea()
         {
             new AdressCRWindow(_adressService, _streetService, SelectedAdress).ShowDialog();
-            LoadAdresses();
+            await LoadAdresses();
         }
 
-        public void UpdateAdress(Adress adress, int newNumber)
+        public async Task UpdateAdress()
         {
-            _adressService.UpdateAdress(adress, newNumber);
-            LoadAdresses();
+            //update window
+            new AdressCRWindow(_adressService,_streetService, SelectedAdress,true).ShowDialog();
+            
+            await LoadAdresses();
         }
 
-        public void RedactAdress(Adress adress)
+        public async Task RedactAdress(Adress adress)
         {
             _adressService.RedactAdress(adress);
-            LoadAdresses();
+            await LoadAdresses();
         }
 
-        public void DeleteAdress(Adress adress)
+        public async Task DeleteAdress(Adress adress)
         {
             _adressService.DeleteAdress(adress);
-            LoadAdresses();
+            await LoadAdresses();
+        }
+
+        public async Task AddHistory(Adress adress)
+        {
+            new AdressCRWindow(_adressService, _streetService, adress, isHistoryMode: true).ShowDialog();
+            await LoadAdresses();
         }
 
 

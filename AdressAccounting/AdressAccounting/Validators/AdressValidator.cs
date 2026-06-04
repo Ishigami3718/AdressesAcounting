@@ -11,7 +11,7 @@ namespace AdressAccounting.Validators
         public AdressValidator(AdressService service)
         {
             _service = service;
-            RuleFor(a => a.Street).NotNull().WithMessage("Вулиця не може бути порожньою");
+            RuleFor(a => a.StreetId).NotEmpty().WithMessage("Вулиця не може бути порожньою");
             RuleFor(a => a.Number)
                 .GreaterThan(0).WithMessage("Номер цілий невід'ємний")
                 .LessThanOrEqualTo(10000).WithMessage("Номер завеликий")

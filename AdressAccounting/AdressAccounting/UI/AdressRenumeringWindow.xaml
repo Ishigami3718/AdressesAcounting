@@ -48,7 +48,7 @@ RelativeSource={RelativeSource AncestorType=Window}}"/>
                         </Style>
                     </DataGridComboBoxColumn.ElementStyle>
                 </DataGridComboBoxColumn>
-                <DataGridTextColumn Header="Новий номер" IsReadOnly="False" Binding="{Binding Number}" Width="0.8*"/>
+                <DataGridTextColumn Header="Новий номер" IsReadOnly="False" Binding="{Binding Number, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Width="0.8*"/>
             </DataGrid.Columns>
 
 

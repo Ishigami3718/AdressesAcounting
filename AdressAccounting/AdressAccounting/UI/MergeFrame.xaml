@@ -100,7 +100,7 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="Злити вулиці" Margin="5"/>
+            <Button Content="Злити вулиці" Margin="5" Click="Button_Click_1"/>
         </StackPanel>
 
         <GroupBox Header="Вулиці доступні до злиття" Grid.Row="0" Grid.Column="1">

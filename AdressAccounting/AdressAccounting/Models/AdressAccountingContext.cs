@@ -47,7 +47,9 @@ public partial class AdressAccountingContext : DbContext
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-            optionsBuilder.UseNpgsql(connectionString);
+            optionsBuilder.UseNpgsql(connectionString)
+                .LogTo(message => System.Diagnostics.Debug.WriteLine(message), Microsoft.Extensions.Logging.LogLevel.Information)
+        .EnableSensitiveDataLogging(); ;
         }
     }
 
@@ -80,6 +82,7 @@ public partial class AdressAccountingContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("AdressRecords_pkey");
 
+
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd()
                 .HasColumnName("id");
@@ -88,14 +91,16 @@ public partial class AdressAccountingContext : DbContext
             entity.Property(e => e.DateFrom).HasColumnName("dateFrom");
             entity.Property(e => e.DateTo).HasColumnName("dateTo");
             entity.Property(e => e.Number).HasColumnName("number");
+            entity.Property(e => e.StreetName).HasColumnName("streetName");
+
 
             entity.HasOne(d => d.Adress).WithMany(p => p.AdressRecords)
                 .HasForeignKey(d => d.AdressId)
-                .HasConstraintName("AdressRecords_adressId_fkey");
+                .HasConstraintName("AdressRecords_adressId_fkey").OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.Area).WithMany(p => p.AdressRecords)
                 .HasForeignKey(d => d.AreaId)
-                .HasConstraintName("AdressRecords_areaId_fkey");
+                .HasConstraintName("AdressRecords_areaId_fkey").OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<AreaBuilding>(entity =>

@@ -21,7 +21,7 @@ namespace AdressAccounting.UI
         private List<Street> _newstreets = new List<Street>();
         public ObservableCollection<Adress> Adresses { get; set; }
         public ObservableCollection<Street> Streets { get; set; }
-        public struct NewNumber
+        public class NewNumber
         {
             public int Number {  get; set; }
             public Street Street { get; set; }

@@ -40,6 +40,8 @@
                               IsChecked="{Binding IsActualFilter}"/>
                     <CheckBox Name="HasHistory" Content="Має історію змін" Margin="5" 
                               IsChecked="{Binding IsHasHistoryFilter}"/>
+                    <CheckBox Name="HasRelatedAdressOnSameArea" Content="Має пов'язані адреси на однаковій ділянці" Margin="5" 
+                              IsChecked="{Binding IsHasRelatedAdressOnSameArea}"/>
                     <TextBlock Text="Історія змін після дати"/>
                     <DatePicker Name="HistoryDatePickerFrom" Margin="5" SelectedDate="{Binding SelectedDateFromFilter, 
                         UpdateSourceTrigger=PropertyChanged}">

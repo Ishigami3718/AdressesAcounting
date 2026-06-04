@@ -148,9 +148,10 @@ namespace AdressAccounting.UI
         private void UpdateStreets()
         {
             Streets = new(_streetService.FilterByIsActual()
-                    .Where(s => !s.SplitResults.Any() && !s.MergeRecords.Any()).OrderBy(s => s.Name));
+                    .Where(s => s.SplitRecord == null && !s.MergedStreets.Any()).OrderBy(s => s.Name));
             if (!string.IsNullOrEmpty(Name)) Streets = 
                     new ObservableCollection<Street>(Streets.Where(s => s.Name.ToLower().Contains(Name.ToLower())));
+            SelectedStreets = new ObservableCollection<Street>();
         }
 
         public void GetNewNumbers()
@@ -160,6 +161,30 @@ namespace AdressAccounting.UI
             newNumbers = window.NewNumbersInt;
         }
 
+        public void MergeStreets()
+        {
+            
+            if (IsHistorical)
+            {
+
+            }
+            else
+            {
+                Street streetResult = new Street
+                {
+                    Name = string.IsNullOrEmpty(NewName) ? SelectedStreets.First().Name : NewName,
+                    IsActual = true
+                };
+                StreetValidator validator = new StreetValidator();
+                var result = validator.Validate(streetResult);
+                if (result.IsValid)
+                {
+                    _mergeService.MergeStreets(SelectedStreets.ToList(), streetResult,
+                        DateOnly.FromDateTime(DateTime.Now), newNumbers);
+                    UpdateStreets();
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)

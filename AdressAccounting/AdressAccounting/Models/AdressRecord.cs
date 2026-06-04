@@ -17,6 +17,8 @@ public partial class AdressRecord
 
     public int? AreaId { get; set; }
 
+    public string? StreetName { get; set; }
+
     public virtual Adress? Adress { get; set; }
 
     public virtual AreaBuilding? Area { get; set; }

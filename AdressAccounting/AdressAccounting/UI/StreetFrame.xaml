@@ -19,8 +19,6 @@
                     Click="UpdateButton_Click"/>
                     <Button Name="DeleteButton" Content="Видалити" IsEnabled="{Binding IsStreetSelected}"
                     Click="DeleteButton_Click"/>
-                    <Button Name="AddParentsButton" Content="Додати батьківські адреси" IsEnabled="{Binding IsStreetSelected}"
-                    Click="AddParentsButton_Click"/>
 
                 </ToolBar>
             </ToolBarTray>

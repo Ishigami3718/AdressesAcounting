@@ -45,6 +45,38 @@
             <Grid>
                 <Grid.Style>
                     <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsActual, 
+    UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Від дати" Margin="5" Grid.Column="0"/>
+                <DatePicker Name="DatePickerFromCreating" Margin="5" Grid.Column="1"
+        SelectedDate="{Binding DateFromCreating, UpdateSourceTrigger=PropertyChanged}">
+                    <DatePicker.Style>
+                        <Style TargetType="DatePicker">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDateFromCreatingValid, 
+                UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                    <Setter Property="BorderBrush" Value="Red"/>
+                                    <Setter Property="BorderThickness" Value="2"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DatePicker.Style>
+                </DatePicker>
+            </Grid>
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
                         <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsActual, 
